@@ -27,7 +27,7 @@ task buildZip(type: Zip) {
     // Link: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Zip.html
 
     // set the base name of the zip file
-    baseName = "hello"
+    baseName = "roadmaps-api"
     from compileJava
     from processResources
     into('lib') {
@@ -38,5 +38,5 @@ task buildZip(type: Zip) {
 build.dependsOn buildZip
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.5'
+    gradleVersion = '4.10.2'
 }

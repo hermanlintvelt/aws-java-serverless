@@ -47,10 +47,10 @@ provider:
 
 # you can add packaging information here
 package:
-  artifact: build/distributions/hello.zip
+  artifact: build/distributions/roadmaps-api.zip
 
 functions:
-  hello:
+  roadmaps-handler:
     handler: com.serverless.Handler
 
 #    The following are a few example events you can configure

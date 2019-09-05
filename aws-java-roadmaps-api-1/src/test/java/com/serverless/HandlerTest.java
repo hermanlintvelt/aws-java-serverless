@@ -1,12 +1,20 @@
 package com.serverless;
 
-import java.util.Collections;
-import java.util.Map;
-
+import com.amazonaws.services.lambda.runtime.ClientContext;
+import com.amazonaws.services.lambda.runtime.CognitoIdentity;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HandlerTest {
 
@@ -14,14 +22,12 @@ public class HandlerTest {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private GetKeysHandler subject;
+    private Handler subject;
     private Context testContext;
-    private KeysRepository keysRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        subject = new GetKeysHandler();
-        keysRepository = new MockedKeysRespository();
+        subject = new Handler();
         testContext = new Context() {
             @Override
             public String getAwsRequestId() {
@@ -81,4 +87,25 @@ public class HandlerTest {
             }
         };
     }
+
+    private static String converToJson(Object objectBody){
+        try {
+            return objectMapper.writeValueAsString(objectBody);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Test
+    void handleTestHandler() {
+        Map<String,Object> input = new HashMap<>();
+        input.put("testKey","test value");
+        ApiGatewayResponse response = subject.handleRequest(input, testContext);
+        assertEquals(200, response.getStatusCode());
+
+        Response expectedResponse = new Response("Go Serverless v1.x! Your function executed successfully!", input);
+        assertEquals(converToJson(expectedResponse), response.getBody());
+    }
+
 }

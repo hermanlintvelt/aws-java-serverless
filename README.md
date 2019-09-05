@@ -34,27 +34,27 @@ See code in `aws-java-roadmaps-api-1` folder.
    2. `build.gradle` : update gradle wrapper to `4.10.x` or `5.x`
    3. `serverless.yml` : `package: artifact` : `hello.zip` -> `roadmaps-api.zip`
    4. `serverless.yml` : `funcions` : `hello` -> `roadmaps-handler`
-   5. TODO: update *AWS* profile/credentials...
-3. Build it - TODO
-4. Deploy it - TODO
-5. Run it - TODO
+   5. `serverless.yml` : update *AWS* profile
+3. Build it : `./gradlew build`
+4. Deploy it : `sls deploy`
+5. Run it : `sls invoke -f roadmaps-handler --stage development --logs --data '{"someKey":"someValue"}'`
 
 *What is missing?*
 
-5. Test it - TODO
+5. Test it : unit test for Lambda Handlers
 
 _Tips:_
 * Lots of examples: (https://github.com/serverless/examples)
 * Other project templates: (https://github.com/serverless/serverless/tree/master/lib/plugins/create/templates)
 
+## 3. Add API endpoint
 
-## 2. Add Business Logic
-
-TODO
-
-## 3. Add Handlers and API
-
+TODO - add API GW trigger event
 TODO - show various request parsing methods (pojo, event classes, stream)
+
+## 3. Add More Business Logic
+
+TODO - handlers for updates etc
 
 ## 4. [Optional] Using Swagger to define API
 
@@ -73,6 +73,10 @@ TODO - show SSM usage
 TODO - Xray, Cloudwatch, etc (serverless params for tracing)
 [optional] Datadog, others?
 
-## 8. SQS and SNS 
+## 8. SQS and SNS
+
+TODO
+
+## 9. Lambda Layers
 
 TODO

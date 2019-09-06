@@ -54,7 +54,7 @@ functions:
     events:
       - http:
           path: hello
-          method: get
+          method: post
           cors: true
   stream-handler:
     handler: com.serverless.StreamHandler

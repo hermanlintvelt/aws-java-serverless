@@ -130,18 +130,76 @@ dependencies {
 2. Update `com.serverless.Handler.java` to use `APIGatewayProxyRequestEvent`:
 
 ```java
+public class Handler implements RequestHandler<APIGatewayProxyRequestEvent, ApiGatewayResponse> {
 
+    private static final Logger LOG = Logger.getLogger(Handler.class);
+
+    @Override
+    public ApiGatewayResponse handleRequest(APIGatewayProxyRequestEvent request, Context context) {
+        LOG.info("received API request: " + request);
+        Response responseBody = new Response("Go Serverless v1.x! Your function executed successfully!", request.getBody());
+        return ApiGatewayResponse.builder()
+                .setStatusCode(200)
+                .setObjectBody(responseBody)
+                .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & serverless"))
+                .build();
+    }
+}
 ```
 
-3. Update `Response` class
-TODO
+3. Update `Response` class to not take Map:
+
+```java
+public class Response {
+
+    private final String message;
+    private final String input;
+
+    public Response(String message, String input) {
+        this.message = message;
+        this.input = input;
+    }
+
+    public String getMessage() {
+        return this.message;
+    }
+
+    public String getInput() {
+        return this.input;
+    }
+}
+```
 
 4. Update Unit test!
-TODO
+
+```java
+    @Test
+    void handleTestHandler() {
+        Map<String,Object> input = new HashMap<>();
+        input.put("testKey","test value");
+        APIGatewayProxyRequestEvent requestEvent = new APIGatewayProxyRequestEvent();
+        requestEvent.setBody(converToJson(input));
+        ApiGatewayResponse response = subject.handleRequest(requestEvent, testContext);
+        assertEquals(200, response.getStatusCode());
+
+        Response expectedResponse = new Response("Go Serverless v1.x! Your function executed successfully!", converToJson(input));
+        assertEquals(converToJson(expectedResponse), response.getBody());
+    }
+```
+
+But now are getting `null` back as input in the response?! Hmm, let us see why in the logs:
+`sls logs -f roadmaps-handler`
+
+5. And we change the HTTP event to accept a `POST` rather (cause we want to send a body with the request):
+
+In `serverless.yml` we change `http.method` from `get` to `post`.
 
 ### 2.4 Using POJOs for requests
 
-TODO
+The `APIGatewayProxyRequestEvent` can be a bit overwhelming, and need repetitive coding to parse the body into objects, etc. 
+We can actually define our own Java class for the request type.
+
+TODO:
 
 ## 3. Add More Business Logic
 
@@ -161,7 +219,7 @@ TODO - show SSM usage
 
 ## 7. Monitoring
 
-TODO - Xray, Cloudwatch, etc (serverless params for tracing)
+TODO - enable tracing, Xray, Cloudwatch, etc (serverless params for tracing)
 [optional] Datadog, others?
 
 ## 8. SQS and SNS

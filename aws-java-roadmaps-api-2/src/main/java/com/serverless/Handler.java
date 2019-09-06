@@ -1,7 +1,6 @@
 package com.serverless;
 
 import java.util.Collections;
-import java.util.Map;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import org.apache.log4j.Logger;

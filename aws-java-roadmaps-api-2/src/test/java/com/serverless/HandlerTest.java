@@ -3,6 +3,7 @@ package com.serverless;
 import com.amazonaws.services.lambda.runtime.ClientContext;
 import com.amazonaws.services.lambda.runtime.CognitoIdentity;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
+import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
@@ -101,10 +102,12 @@ public class HandlerTest {
     void handleTestHandler() {
         Map<String,Object> input = new HashMap<>();
         input.put("testKey","test value");
-        ApiGatewayResponse response = subject.handleRequest(input, testContext);
+        APIGatewayProxyRequestEvent requestEvent = new APIGatewayProxyRequestEvent();
+        requestEvent.setBody(converToJson(input));
+        ApiGatewayResponse response = subject.handleRequest(requestEvent, testContext);
         assertEquals(200, response.getStatusCode());
 
-        Response expectedResponse = new Response("Go Serverless v1.x! Your function executed successfully!", input);
+        Response expectedResponse = new Response("Go Serverless v1.x! Your function executed successfully!", converToJson(input));
         assertEquals(converToJson(expectedResponse), response.getBody());
     }
 

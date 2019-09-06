@@ -1,7 +1,5 @@
 package com.serverless;
 
-import java.util.Map;
-
 public class Response {
 
 	private final String message;

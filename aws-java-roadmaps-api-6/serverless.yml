@@ -20,7 +20,7 @@ service: roadmaps-api # NOTE: update this with your service name
 provider:
   name: aws
   runtime: java8
-  profile: custos-development
+  profile: default
   stage: development
   region: eu-west-1
   apiKeys:

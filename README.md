@@ -847,9 +847,323 @@ functions:
 Now bulid and deploy. 
 Try it out with `GET` to `/roadmapitems` as well as to e.g. `/roadmapitems/<itemid>`
 
+_We will come back to handling *Update* and *Delete* of items later. First add some persistence.._
+
 ## 4. DynamoDB for Persistence
 
-TODO - show different dynamoDB mapping approaches? or just DynamoDBMapper Also indexes
+The AWS Java SDK has a nifty way of dealing with DynamoDB persistence called *DynamoDBMapper*. We will use that to add persistence to our service. 
+
+### Adding Persistence code
+
+We can jumple a whole bunch of context and annotations with our normal domain classses, e.g. `RoadmapItem`, but that will add complexity we do not want in our business/domain layer. Let us rather keep persistence stuff separate by create separate DTO classes. 
+
+1. Add DynamoDB sdk lib dependency to `build.gradle`:
+   
+```gradle
+dependencies {
+    compile (
+            ..
+            'com.amazonaws:aws-lambda-java-events:2.2.6',
+            ..
+    )
+}
+```
+
+2. Define `RoadmapItemDTO` to map our domain class to DynamoDB friendly entity:
+   
+```java
+package com.serverless.persistence.dynamodb;
+
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.serverless.domain.RoadmapItem;
+import org.apache.log4j.Logger;
+
+import java.util.Date;
+
+@DynamoDBTable(tableName="RoadmapItems")
+public class RoadmapItemDTO {
+    private static final Logger LOG = Logger.getLogger(RoadmapItemDTO.class);
+
+    private String roadmapItemId;
+    private String name;
+    private String description;
+    private RoadmapItem.PriorityType priorityType;
+    private Date milestoneDate;
+
+    @DynamoDBHashKey(attributeName="roadmapItemId")
+    public String getRoadmapItemId() {
+        return roadmapItemId;
+    }
+
+    public void setRoadmapItemId(String roadmapItemId) {
+        this.roadmapItemId = roadmapItemId;
+    }
+
+    @DynamoDBAttribute(attributeName="name")
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @DynamoDBAttribute(attributeName="description")
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @DynamoDBTypeConverted(converter = PriorityTypeConverter.class)
+    @DynamoDBAttribute(attributeName="priorityType")
+    public RoadmapItem.PriorityType getPriorityType() {
+        return priorityType;
+    }
+
+    public void setPriorityType(RoadmapItem.PriorityType priorityType) {
+        this.priorityType = priorityType;
+    }
+
+    @DynamoDBAttribute(attributeName="milestoneDate")
+    public Date getMilestoneDate() {
+        return milestoneDate;
+    }
+
+    public void setMilestoneDate(Date milestoneDate) {
+        this.milestoneDate = milestoneDate;
+    }
+
+    static public class PriorityTypeConverter implements DynamoDBTypeConverter<String, RoadmapItem.PriorityType> {
+
+        @Override
+        public String convert(RoadmapItem.PriorityType priorityType) {
+            return priorityType.name();
+        }
+
+        @Override
+        public RoadmapItem.PriorityType unconvert(String s) {
+            return RoadmapItem.PriorityType.valueOf(s);
+        }
+    }
+
+}
+```
+
+2. Add ways to convert between `RoadmapItem` and `RoadmapItemDTO`:
+
+```java
+//in `RoadmapItemDTO.java
+    public static RoadmapItemDTO fromEvent(RoadmapItem item){
+        RoadmapItemDTO dto = new RoadmapItemDTO();
+        dto.setRoadmapItemId(item.getRoadmapItemId().toString());
+        dto.setName(item.getName());
+        dto.setDescription(item.getDescription());
+        dto.setPriorityType(item.getPriorityType());
+        if (item.getMilestoneDate()!=null){
+            dto.setMilestoneDate(DateUtils.asDateUTC(item.getMilestoneDate()));
+        }
+        return dto;
+    }
+
+    public RoadmapItem asRoadmapItem(){
+        return new RoadmapItem(
+                UUID.fromString(getRoadmapItemId()),
+                getName(),
+                getDescription(),
+                getPriorityType(),
+                getMilestoneDate()!=null?DateUtils.asLocalDateUTC(getMilestoneDate()):null
+        );
+    }
+```
+
+3. We need some helper classes to hook up the right tables, etc:
+
+```java
+package com.serverless.persistence.dynamodb;
+
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
+import com.serverless.domain.RoadmapItem;
+import org.apache.log4j.Logger;
+
+public class DynamoDBConfig {
+    private static final Logger LOG = Logger.getLogger(DynamoDBConfig.class);
+
+    public DynamoDBMapperConfig dynamoDBMapperConfig() {
+        DynamoDBMapperConfig.Builder builder = new DynamoDBMapperConfig.Builder();
+        builder.setTableNameResolver(new CustomNameResolver());
+        return builder.build();
+    }
+
+    private static class CustomNameResolver implements DynamoDBMapperConfig.TableNameResolver {
+        public String getTableName(Class<?> clazz, DynamoDBMapperConfig config) {
+            if (clazz.equals(RoadmapItem.class)){
+                String tableName = System.getenv("ROADMAP_ITEMS_TABLE");
+                LOG.info("RoadmapItems DBTable name configuration with name: "+tableName);
+                return tableName;
+            }
+            else return "UnknownTable";
+        }
+    }
+}
+```
+
+4. Now we create a `RoadmapItemsRepository` class to do the actual persistence work:
+
+```java
+package com.serverless.persistence.dynamodb;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.serverless.domain.RoadmapItem;
+import org.apache.log4j.Logger;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+public class RoadmapItemsRepository {
+    private static final Logger LOG = Logger.getLogger(RoadmapItemsRepository.class);
+
+    private final DynamoDBMapper dbMapper;
+
+    public RoadmapItemsRepository() {
+        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
+        dbMapper = new DynamoDBMapper(client, new DynamoDBConfig().dynamoDBMapperConfig());
+    }
+
+    public RoadmapItem createRoadmapItem(RoadmapItem newItem){
+        if (newItem.getRoadmapItemId()==null){
+            newItem.setRoadmapItemId(UUID.randomUUID());
+        }
+        RoadmapItemDTO dto = RoadmapItemDTO.fromItem(newItem);
+        dbMapper.save(dto);
+        LOG.info("Created new RoadmapItem in dynamoDB: "+newItem);
+
+        return getRoadmapItem(newItem.getRoadmapItemId());
+    }
+
+    public RoadmapItem getRoadmapItem(UUID roadmapItemid){
+        RoadmapItemDTO result = dbMapper.load(RoadmapItemDTO.class, roadmapItemid.toString());
+        if (result == null) return null;
+        return result.asRoadmapItem();
+    }
+
+    public List<RoadmapItem> getRoadmapItems() {
+        return dbMapper.scan(RoadmapItemDTO.class, new DynamoDBScanExpression().withLimit(1000))
+                .stream().map(RoadmapItemDTO::asRoadmapItem).collect(Collectors.toList());
+    }
+
+}
+```
+
+5. And we actually need to define the DynamoDB resources (tables and indexes) in `serverless.yml`:
+   
+```yaml
+..
+provider:
+  ..
+  environment:
+    ROADMAP_ITEMS_TABLE: ${self:service}-${opt:stage, self:provider.stage}-roadmapitems
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.ROADMAP_ITEMS_TABLE}"
+..
+//at the end
+resources:
+  Resources:
+    ItemsDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:provider.environment.ROADMAP_ITEMS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: roadmapItemId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: roadmapItemId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+```
+
+### Hooking it up to our handlers
+
+1. Update `CreateRoadmapsHandler` to use persistence:
+
+```java
+public class CreateRoadmapsHandler implements RequestHandler<RoadmapRequest, ApiGatewayResponse> {
+
+    private static final Logger LOG = Logger.getLogger(CreateRoadmapsHandler.class);
+    private static final RoadmapItemsRepository itemsRepository = new RoadmapItemsRepository();
+
+    @Override
+    public ApiGatewayResponse handleRequest(RoadmapRequest request, Context context) {
+        LOG.info("received Create Roadmap API request: " + request);
+
+        Optional<RoadmapItem> newItem = request.getBodyAsRoadmapItem();
+        if (newItem.isPresent()){
+            RoadmapItem result = itemsRepository.createRoadmapItem(newItem.get());
+            return ApiGatewayResponse.builder()
+                    .setStatusCode(200)
+                    .setObjectBody(result)
+                    .build();
+        } else {
+            return ApiGatewayResponse.builder()
+                    .setStatusCode(204)
+                    .setObjectBody(new Response("Error creating RoadmapItem","Could probably not parse the JSON"))
+                    .build();
+        }
+    }
+    }
+```
+
+2. Update `GetRoadmapsHandler` to use persistence:
+
+```java
+//in GetRoadmapsHandler.java
+    private ApiGatewayResponse handleSingleItemRequest(RoadmapRequest request) {
+        String uuidStr = request.getPathParameters().getRoadmapItemId();
+        UUID roadmapItemId = null;
+        try {
+            roadmapItemId = UUID.fromString(uuidStr);
+        } catch (IllegalArgumentException e) {
+            LOG.error("Unvalid UUID provided for roadmapItemId");
+            return ApiGatewayResponse.builder()
+                    .setStatusCode(400)
+                    .setObjectBody(new Response("Error retrieving RoadmapItem","Unvalid UUID provided for roadmapItemId: "+uuidStr))
+                    .build();
+        }
+        RoadmapItem result = itemsRepository.getRoadmapItem(roadmapItemId);
+        return ApiGatewayResponse.builder()
+                .setStatusCode(200)
+                .setObjectBody(result)
+                .build();
+    }
+
+    private ApiGatewayResponse handleItemsRequest(RoadmapRequest request){
+        return ApiGatewayResponse.builder()
+                .setStatusCode(200)
+                .setObjectBody(itemsRepository.getRoadmapItems())
+                .build();
+    }
+```
+
+*Oops!* _Now our tests are failing!
+Answer: mock a bit! (or get a local DynamoDB emulator going..)
+_For now we just bypass the test, and cover mocking in a next session._
 
 ## 5. Securing Credentials
 
@@ -864,6 +1178,10 @@ TODO: RequestContext in request class to get auth creds
 
 TODO - enable tracing, Xray, Cloudwatch, etc (serverless params for tracing)
 [optional] Datadog, others?
+
+## 8. [Optional] Mocking AWS Services
+
+TODO
 
 ## 8. [Optional] Using Swagger to define API
 

@@ -97,7 +97,6 @@ public class CreateRoadmapsHandlerTest {
     }
 
 
-    @Test
     void handleTestHandler() {
         RoadmapItem testItem = new RoadmapItem(
                 UUID.randomUUID(),

@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2018 Flexistore
- */
-
 package com.serverless.json;
 
 import com.fasterxml.jackson.core.JsonParser;

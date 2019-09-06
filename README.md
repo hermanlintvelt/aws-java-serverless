@@ -25,8 +25,7 @@ In order to do this tutorial, you need to install a few things:
 
 ### Configuration Setup
 
-* Create AWS account
-* Setup credentials for *Serverless* using [this link](https://serverless.com/framework/docs/providers/aws/guide/credentials/)
+* Create AWS account and setup credentials for *Serverless* using [this great article on how to setup Serverless to work with AWS](https://serverless.com/framework/docs/providers/aws/guide/credentials/).
 
 ## 1. Create Basic Handler
 

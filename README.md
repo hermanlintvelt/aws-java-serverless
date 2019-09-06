@@ -1167,7 +1167,25 @@ _For now we just bypass the test, and cover mocking in a next session._
 
 ## 5. Securing Credentials
 
-TODO - show SSM usage
+Managing secure credentials (e.g. credentials to integrate other services, etc) can be painful. The *AWS SSM*'s _Paramater Store_ is an easy to use service for storing credentials needed by your serverless code. 
+
+1. Add super secret key `/development/mysecrets/apikey` to SSM:
+
+_This can be done via *aws-cli*, but for today we do it via the web console._
+
+2. Add `SecureParameterService` class to retrieve it:
+
+TODO
+
+3. Update handler to use it:
+
+TODO
+
+Test and .... error? What happened?!
+
+4. Update IAM permissions in `serverless.yaml`:
+
+TODO:
 
 ## 6. Securing the API
 

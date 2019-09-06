@@ -1173,19 +1173,108 @@ Managing secure credentials (e.g. credentials to integrate other services, etc) 
 
 _This can be done via *aws-cli*, but for today we do it via the web console._
 
-2. Add `SecureParameterService` class to retrieve it:
+2. Add *AWS SSM SDK* lib to `build.gradle` dependencies:
 
-TODO
+```gradle
+dependencies {
+    compile (
+            ..
+            "com.amazonaws:aws-java-sdk-ssm:1.11.602",
+            ..
+    }
+}
+```
 
-3. Update handler to use it:
+3. Add `SecureParameterService` class to retrieve it:
+
+```java
+package com.serverless.services;
+
+import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;
+import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
+import com.amazonaws.services.simplesystemsmanagement.model.GetParameterRequest;
+import com.amazonaws.services.simplesystemsmanagement.model.GetParameterResult;
+import org.apache.log4j.Logger;
+
+/**
+ * Service class to give access to parameters stored on AWS Parameter Store
+ */
+public class SecureParameterService {
+    private static final Logger LOG = Logger.getLogger(SecureParameterService.class);
+
+    private static String superSecretApiKey;
+
+    private SecureParameterService(){}
+
+    public static String getParameterValue(String name, boolean withDecryption){
+        final AWSSimpleSystemsManagement client = AWSSimpleSystemsManagementClientBuilder.defaultClient();
+
+        GetParameterRequest request = new GetParameterRequest();
+        request.withName(name).setWithDecryption(withDecryption);
+
+        GetParameterResult result = client.getParameter(request);
+
+        LOG.debug("SSM result for param "+name+": "+result);
+
+        if (result.getParameter() != null){
+            return result.getParameter().getValue();
+        } else {
+            return null;
+        }
+    }
+
+    public static String getStageName(){
+        String stage = System.getenv("STAGE");
+        if (stage == null) stage = "development";
+
+        return stage;
+    }
+
+    public static String getSuperSecretApiKey() {
+        if (superSecretApiKey != null) return superSecretApiKey;
+
+        String paramName = "/"+getStageName()+"/development/mysecrets/apikeyt";
+        superSecretApiKey = getParameterValue(paramName, true);
+
+        if (superSecretApiKey == null) throw new RuntimeException("Super secret is NULL!");
+
+        return superSecretApiKey;
+    }
+}
+```
+
+4. Add `STAGE` env variable in `serverless.yml`:
+
+```yaml
+provider:
+  ..
+  environment:
+    ROADMAP_ITEMS_TABLE: ${self:service}-${opt:stage, self:provider.stage}-roadmapitems
+    STAGE: ${opt:stage, self:provider.stage}
+```
+
+5. Update handler to use it:
 
 TODO
 
 Test and .... error? What happened?!
 
-4. Update IAM permissions in `serverless.yaml`:
+6. Update IAM permissions in `serverless.yaml`:
 
-TODO:
+```yaml
+  ..
+  iamRoleStatements:
+    ..
+    - Effect: Allow
+      Action:
+        - ssm:DescribeParameters
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - ssm:GetParameter
+        - ssm:GetParameters
+      Resource: "arn:aws:ssm:${opt:region, self:provider.region}:*:parameter/${opt:stage, self:provider.stage}/mysecrets/*"
+```
 
 ## 6. Securing the API
 

@@ -25,6 +25,7 @@ provider:
   region: eu-west-1
   environment:
     ROADMAP_ITEMS_TABLE: ${self:service}-${opt:stage, self:provider.stage}-roadmapitems
+    STAGE: ${opt:stage, self:provider.stage}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -35,6 +36,15 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.ROADMAP_ITEMS_TABLE}"
+    - Effect: Allow
+      Action:
+        - ssm:DescribeParameters
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - ssm:GetParameter
+        - ssm:GetParameters
+      Resource: "arn:aws:ssm:${opt:region, self:provider.region}:*:parameter/${opt:stage, self:provider.stage}/mysecrets/*"
 
 # you can add packaging information here
 package:

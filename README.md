@@ -40,7 +40,7 @@ See code in `aws-java-roadmaps-api-1` folder.
    2. `build.gradle` : update gradle wrapper to `4.10.x` or `5.x`
    3. `serverless.yml` : `package: artifact` : `hello.zip` -> `roadmaps-api.zip`
    4. `serverless.yml` : `funcions` : `hello` -> `roadmaps-handler`
-   5. `serverless.yml` : update *AWS* profile
+   5. `serverless.yml` : update *AWS* profile: `profile: default` (_or other profile name used_)
 3. Build it : `./gradlew build`
 4. Deploy it : `sls deploy`
 5. Run it : `sls invoke -f roadmaps-handler --stage development --logs --data '{"someKey":"someValue"}'`
@@ -1305,7 +1305,7 @@ See code in `aws-java-roadmaps-api-6` folder.
 
 There are ways to specify to use Cognito authorisation, or even a custom Lambda as authorizer, but for our example we want to make use of API Keys.
 
-1. Define the API keys and usage plans in `serverless.yml1`:
+1. Define the API keys and usage plans in `serverless.yml`:
 
 ```yaml
 provider:
@@ -1356,3 +1356,7 @@ TODO
 ## 10. Lambda Layers
 
 TODO
+
+## 11. SES hookup
+
+TODO: example to use SES to send emails when this tut is updated

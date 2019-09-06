@@ -851,7 +851,9 @@ _We will come back to handling *Update* and *Delete* of items later. First add s
 
 ## 4. DynamoDB for Persistence
 
-The AWS Java SDK has a nifty way of dealing with DynamoDB persistence called *DynamoDBMapper*. We will use that to add persistence to our service. 
+The AWS Java SDK has a nifty way of dealing with DynamoDB persistence called *DynamoDBMapper*. We will use that to add persistence to our service.
+
+See code in `aws-java-roadmaps-api-4` folder.
 
 ### Adding Persistence code
 
@@ -1167,7 +1169,9 @@ _For now we just bypass the test, and cover mocking in a next session._
 
 ## 5. Securing Credentials
 
-Managing secure credentials (e.g. credentials to integrate other services, etc) can be painful. The *AWS SSM*'s _Paramater Store_ is an easy to use service for storing credentials needed by your serverless code. 
+Managing secure credentials (e.g. credentials to integrate other services, etc) can be painful. The *AWS SSM*'s _Paramater Store_ is an easy to use service for storing credentials needed by your serverless code.
+
+See code in `aws-java-roadmaps-api-5` folder.
 
 1. Add super secret key `/development/mysecrets/apikey` to SSM:
 
@@ -1289,6 +1293,11 @@ Test and .... error? What happened?!
 ```
 
 ## 6. Securing the API
+
+These days we have to keep our doors locked, and the same goes for APIs. 
+With *Serverless Framework* we can define the authorisation to be used on the API endpoints.
+
+See code in `aws-java-roadmaps-api-6` folder.
 
 TODO: cognito vs api key auth
 TODO: RequestContext in request class to get auth creds

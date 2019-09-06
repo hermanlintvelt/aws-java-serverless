@@ -1,0 +1,100 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: roadmaps-api # NOTE: update this with your service name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: java8
+  profile: custos-development
+  stage: development
+  region: eu-west-1
+  environment:
+    ROADMAP_ITEMS_TABLE: ${self:service}-${opt:stage, self:provider.stage}-roadmapitems
+    STAGE: ${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.ROADMAP_ITEMS_TABLE}"
+    - Effect: Allow
+      Action:
+        - ssm:DescribeParameters
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - ssm:GetParameter
+        - ssm:GetParameters
+      Resource: "arn:aws:ssm:${opt:region, self:provider.region}:*:parameter/${opt:stage, self:provider.stage}/mysecrets/*"
+
+# you can add packaging information here
+package:
+  artifact: build/distributions/roadmaps-api.zip
+
+functions:
+  create-handler:
+    handler: com.serverless.handlers.CreateRoadmapsHandler
+    events:
+      - http:
+          path: roadmapitems
+          method: post
+          cors: true
+  list-handler:
+    handler: com.serverless.handlers.GetRoadmapsHandler
+    events:
+      - http:
+          path: roadmapitems
+          method: get
+          cors: true
+  get-handler:
+    handler: com.serverless.handlers.GetRoadmapsHandler
+    events:
+      - http:
+          path: roadmapitems/{roadmapItemId}
+          method: get
+          cors: true
+  roadmaps-handler:
+    handler: com.serverless.handlers.RoadmapsHandler
+    events:
+      - http:
+          path: hello
+          method: post
+          cors: true
+  stream-handler:
+    handler: com.serverless.StreamHandler
+
+resources:
+  Resources:
+    ItemsDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:provider.environment.ROADMAP_ITEMS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: roadmapItemId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: roadmapItemId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

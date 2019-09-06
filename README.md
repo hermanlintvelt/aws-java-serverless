@@ -435,21 +435,427 @@ functions:
 
 ## 3. Add More Business Logic
 
-TODO - handlers for updates etc
+We played with different approached to handling request, and getting a basic Lambda deployed that is triggered from a HTTP API request. Now we want to think about what we actually want to build.
 
-## 4. [Optional] Using Swagger to define API
+### The Domain
 
-TODO
+The idea is a basic *Roadmaps Service*, which allows a user to create, update, delete and retrieve roadmap items. 
 
-## 5. DynamoDB for Persistence
+We are keeping things simple to focus on the tech, so just have one roadmap (implied) with the ability to manage the roadmap items via an HTTP API.
+
+A *Roadmap Item* needs the following information:
+
+* A unique identifier 
+* A short name
+* A longer description
+* A priority indicator (if it is one of _NOW_, _NEXT_ or _LATER_)
+* A milestone date (optional - only used for real committed milestones)
+
+See code in `aws-java-roadmaps-api-3` folder.
+
+### Implement the domain classes
+
+1. Create the class `com.serverless.domain.RoadmapItem`:
+
+```java
+package com.serverless.domain;
+
+import java.time.LocalDate;
+import java.util.UUID;
+
+public class RoadmapItem {
+    public enum PriorityType {
+        NOW, NEXT, LATER
+    }
+
+    private UUID roadmapItemId;
+    private String name;
+    private String description;
+    private PriorityType priorityType;
+    private LocalDate milestoneDate;
+
+    //TODO: generate constructors, get & set methods (or use Lombok)
+}
+```
+
+However, ideally we also want to work with `RoadmapItem` instances on a request level, so for that we can update our `RoadmapRequest` class to handle the mapping from JSON.
+
+2. Update `RoadmapRequest` to parse body's JSON
+
+```java
+..
+    public Optional<RoadmapItem> getBodyAsRoadmapItem(){
+        try {
+            RoadmapItem item = objectMapper.readValue(this.body, RoadmapItem.class);
+            return Optional.of(item);
+        } catch (IOException e) {
+            LOG.error("Error parsing body of request as RoadmapItem object: "+e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+..
+```
+
+### Implement the Handlers
+
+An easy approach is to have separate handlers for following (CRUD) use cases:
+
+* Create RoadmapItem - handler that handles `POST` to endpoint with body defining the new roadmapItem
+* Retrieve RoadmapItem(s) - handler that retrieves one or more items from a `GET` event
+* Update RoadmapItem - handler that updates specified item from a `PUT` event
+* Delete RoadmapItem - handler that deletes specified item from a `DELETE` event
+
+#### CreateRoadmapsHandler
+
+1. Define `CreateRoadmapsHandler` class:
+
+```java
+public class CreateRoadmapsHandler implements RequestHandler<RoadmapRequest, ApiGatewayResponse> {
+
+    private static final Logger LOG = Logger.getLogger(CreateRoadmapsHandler.class);
+
+    @Override
+    public ApiGatewayResponse handleRequest(RoadmapRequest request, Context context) {
+        LOG.info("received Create Roadmap API request: " + request);
+        Optional<RoadmapItem> newItem = request.getBodyAsRoadmapItem();
+        if (newItem.isPresent()){
+            return ApiGatewayResponse.builder()
+                    .setStatusCode(200)
+                    .setObjectBody(newItem.get())
+                    .build();
+        } else {
+            return ApiGatewayResponse.builder()
+                    .setStatusCode(204)
+                    .setObjectBody(new Response("Error creating RoadmapItem","Could probably not parse the JSON"))
+                    .build();
+
+        }
+
+    }
+}
+```
+
+2. Update `serverless.yml` to define an http event to trigger this handler:
+
+```yaml
+functions:
+  create-handler:
+    handler: com.serverless.handlers.CreateRoadmapsHandler
+    events:
+      - http:
+          path: roadmapitems
+          method: post
+          cors: true
+```
+
+3. We need that unit test as well, please..:
+
+```java
+package com.serverless.handlers;
+
+import com.amazonaws.services.lambda.runtime.ClientContext;
+import com.amazonaws.services.lambda.runtime.CognitoIdentity;
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.serverless.domain.RoadmapItem;
+import org.apache.log4j.Logger;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class CreateRoadmapsHandlerTest {
+
+	private static final Logger LOG = Logger.getLogger(CreateRoadmapsHandlerTest.class);
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    private CreateRoadmapsHandler subject;
+    private Context testContext;
+
+    @BeforeEach
+    public void setUp() {
+        subject = new CreateRoadmapsHandler();
+        testContext = new Context() {
+            @Override
+            public String getAwsRequestId() {
+                return null;
+            }
+
+            @Override
+            public String getLogGroupName() {
+                return null;
+            }
+
+            @Override
+            public String getLogStreamName() {
+                return null;
+            }
+
+            // implement all methods of this interface and setup your test context.
+            // For instance, the function name:
+            @Override
+            public String getFunctionName() {
+                return "ExampleAwsLambda";
+            }
+
+            @Override
+            public String getFunctionVersion() {
+                return null;
+            }
+
+            @Override
+            public String getInvokedFunctionArn() {
+                return null;
+            }
+
+            @Override
+            public CognitoIdentity getIdentity() {
+                return null;
+            }
+
+            @Override
+            public ClientContext getClientContext() {
+                return null;
+            }
+
+            @Override
+            public int getRemainingTimeInMillis() {
+                return 0;
+            }
+
+            @Override
+            public int getMemoryLimitInMB() {
+                return 0;
+            }
+
+            @Override
+            public LambdaLogger getLogger() {
+                return null;
+            }
+        };
+    }
+
+    private static String converToJson(Object objectBody){
+        try {
+            return objectMapper.writeValueAsString(objectBody);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void handleTestHandler() {
+        RoadmapItem testItem = new RoadmapItem(
+                UUID.randomUUID(),
+                "Test item",
+                "A first test item",
+                RoadmapItem.PriorityType.NOW,
+                LocalDate.of(2019,07,06));
+        RoadmapRequest requestEvent = new RoadmapRequest();
+        requestEvent.setBody(converToJson(testItem));
+        ApiGatewayResponse response = subject.handleRequest(requestEvent, testContext);
+        assertEquals(200, response.getStatusCode());
+
+        assertEquals(converToJson(testItem), response.getBody());
+    }
+}
+```
+
+*Now run the tests.* _So why does this fail?_
+
+4. Add custom Json serialization for `LocalDate`:
+
+```java
+//LocalDateSerializer.java
+package com.serverless.json;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+public class LocalDateSerializer extends StdSerializer<LocalDate> {
+
+    public LocalDateSerializer() {
+        super(LocalDate.class);
+    }
+
+    @Override
+    public void serialize(LocalDate value, JsonGenerator generator, SerializerProvider provider) throws IOException {
+        generator.writeString(value.format(DateTimeFormatter.ISO_LOCAL_DATE));
+    }
+}
+
+//LocalDateDeserializer.java
+package com.serverless.json;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+
+import java.io.IOException;
+import java.time.LocalDate;
+
+public class LocalDateDeserializer extends StdDeserializer<LocalDate> {
+
+    protected LocalDateDeserializer() {
+        super(LocalDate.class);
+    }
+
+    @Override
+    public LocalDate deserialize(JsonParser parser, DeserializationContext context) throws IOException {
+        return LocalDate.parse(parser.readValueAs(String.class));
+    }
+}
+```
+
+5. Update `RoadmapItem` to use these serializers:
+
+```java
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    private LocalDate milestoneDate;
+```
+
+The unit tests should work fine now. 
+
+6. Build, deploy and test the API `POST` request to `/roadmapitems` endpoint.
+
+Those `nulls` in the response is not so nice. Easy to get rid of it with some annotations..
+
+7. Update `RoadmapItem` to ignore _null_ values in JSON presentation.
+
+```java
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class RoadmapItem {
+    ..
+}
+```
+
+#### GetRoadmapsHandler
+
+Let us define a handler that handles the retrieval of all RoadmapItems, or of a specified item.
+
+1. Implement `GetRoadmapsHandler`:
+
+```java
+package com.serverless.handlers;
+
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.serverless.domain.RoadmapItem;
+import org.apache.log4j.Logger;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.IntStream;
+
+public class GetRoadmapsHandler implements RequestHandler<RoadmapRequest, ApiGatewayResponse> {
+
+    private static final Logger LOG = Logger.getLogger(GetRoadmapsHandler.class);
+
+    @Override
+    public ApiGatewayResponse handleRequest(RoadmapRequest request, Context context) {
+    LOG.info("received GET Roadmap API request: " + request);
+
+    if (request.getResource() != null && request.getResource().equals("/roadmapitems/{roadmapItemId}")) {
+        return handleSingleItemRequest(request);
+    }
+
+    return handleItemsRequest(request);
+    }
+
+    private ApiGatewayResponse handleSingleItemRequest(RoadmapRequest request) {
+    String uuidStr = request.getPathParameters().getRoadmapId();
+    UUID roadmapItemId = null;
+    try {
+        roadmapItemId = UUID.fromString(uuidStr);
+    } catch (IllegalArgumentException e) {
+        LOG.error("Unvalid UUID provided for roadmapItemId");
+        return ApiGatewayResponse.builder()
+                .setStatusCode(400)
+                .setObjectBody(new Response("Error retrieving RoadmapItem","Unvalid UUID provided for roadmapItemId: "+uuidStr))
+                .build();
+    }
+
+
+    RoadmapItem mockedItem = new RoadmapItem(
+            roadmapItemId,
+            "Mocked Item",
+            "Mocked Item Description",
+            RoadmapItem.PriorityType.NOW,
+            LocalDate.now()
+    );
+    return ApiGatewayResponse.builder()
+            .setStatusCode(200)
+            .setObjectBody(mockedItem)
+            .build();
+    }
+
+    private ApiGatewayResponse handleItemsRequest(RoadmapRequest request){
+    List<RoadmapItem> mockedItems = new ArrayList<>();
+
+    IntStream.range(1,10).forEach(i ->
+            mockedItems.add(new RoadmapItem(
+                    UUID.randomUUID(),
+                    "Mocked Item "+i,
+                    "Mocked Item Description "+i,
+                    RoadmapItem.PriorityType.NOW,
+                    LocalDate.now())));
+    return ApiGatewayResponse.builder()
+            .setStatusCode(200)
+            .setObjectBody(mockedItems)
+            .build();
+    }
+}
+```
+
+2. Update `serverless.yaml` to add this as function:
+
+```yaml
+functions:
+  list-handler:
+    handler: com.serverless.handlers.GetRoadmapsHandler
+    events:
+      - http:
+          path: roadmapitems
+          method: get
+          cors: true
+  get-handler:
+    handler: com.serverless.handlers.GetRoadmapsHandler
+    events:
+      - http:
+          path: roadmapitems/{roadmapItemId}
+          method: get
+          cors: true
+```
+
+3. Remember a unit test!
+
+Now bulid and deploy. 
+Try it out with `GET` to `/roadmapitems` as well as to e.g. `/roadmapitems/<itemid>`
+
+## 4. DynamoDB for Persistence
 
 TODO - show different dynamoDB mapping approaches? or just DynamoDBMapper Also indexes
 
-## 6. Securing Credentials
+## 5. Securing Credentials
 
 TODO - show SSM usage
 
-## 7. Securing the API
+## 6. Securing the API
 
 TODO: cognito vs api key auth
 TODO: RequestContext in request class to get auth creds
@@ -459,10 +865,14 @@ TODO: RequestContext in request class to get auth creds
 TODO - enable tracing, Xray, Cloudwatch, etc (serverless params for tracing)
 [optional] Datadog, others?
 
-## 8. SQS and SNS
+## 8. [Optional] Using Swagger to define API
 
 TODO
 
-## 9. Lambda Layers
+## 9. SQS and SNS
+
+TODO
+
+## 10. Lambda Layers
 
 TODO

@@ -1233,7 +1233,7 @@ public class SecureParameterService {
     public static String getSuperSecretApiKey() {
         if (superSecretApiKey != null) return superSecretApiKey;
 
-        String paramName = "/"+getStageName()+"/development/mysecrets/apikeyt";
+        String paramName = "/"+getStageName()+"/mysecrets/apikeyt";
         superSecretApiKey = getParameterValue(paramName, true);
 
         if (superSecretApiKey == null) throw new RuntimeException("Super secret is NULL!");
@@ -1253,9 +1253,21 @@ provider:
     STAGE: ${opt:stage, self:provider.stage}
 ```
 
-5. Update handler to use it:
+5. Update `GetRoadmapsHandler` handler to use it:
 
-TODO
+```java
+    public ApiGatewayResponse handleRequest(RoadmapRequest request, Context context) {
+        LOG.info("received GET Roadmap API request: " + request);
+
+        LOG.info("*** My super secret key: "+ SecureParameterService.getSuperSecretApiKey());
+
+        if (request.getResource() != null && request.getResource().equals("/roadmapitems/{roadmapItemId}")) {
+            return handleSingleItemRequest(request);
+        }
+
+        return handleItemsRequest(request);
+    }
+```
 
 Test and .... error? What happened?!
 

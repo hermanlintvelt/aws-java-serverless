@@ -43,7 +43,7 @@ public class SecureParameterService {
     public static String getSuperSecretApiKey() {
         if (superSecretApiKey != null) return superSecretApiKey;
 
-        String paramName = "/"+getStageName()+"/development/mysecrets/apikey";
+        String paramName = "/"+getStageName()+"/mysecrets/apikey";
         superSecretApiKey = getParameterValue(paramName, true);
 
         if (superSecretApiKey == null) throw new RuntimeException("Super secret is NULL!");

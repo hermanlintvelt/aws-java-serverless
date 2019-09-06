@@ -1161,7 +1161,7 @@ public class CreateRoadmapsHandler implements RequestHandler<RoadmapRequest, Api
     }
 ```
 
-*Oops!* _Now our tests are failing!
+*Oops!* _Now our tests are failing!_
 Answer: mock a bit! (or get a local DynamoDB emulator going..)
 _For now we just bypass the test, and cover mocking in a next session._
 

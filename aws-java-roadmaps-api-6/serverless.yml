@@ -23,6 +23,16 @@ provider:
   profile: custos-development
   stage: development
   region: eu-west-1
+  apiKeys:
+    - ${self:service}-${opt:stage, self:provider.stage}-roadmaps-apikey
+  usagePlan:
+    quota:
+      limit: 5000
+      offset: 2
+      period: MONTH
+    throttle:
+      burstLimit: 200
+      rateLimit: 100
   environment:
     ROADMAP_ITEMS_TABLE: ${self:service}-${opt:stage, self:provider.stage}-roadmapitems
     STAGE: ${opt:stage, self:provider.stage}
@@ -58,6 +68,7 @@ functions:
           path: roadmapitems
           method: post
           cors: true
+          private: true
   list-handler:
     handler: com.serverless.handlers.GetRoadmapsHandler
     events:

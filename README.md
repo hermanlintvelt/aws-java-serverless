@@ -1299,8 +1299,38 @@ With *Serverless Framework* we can define the authorisation to be used on the AP
 
 See code in `aws-java-roadmaps-api-6` folder.
 
-TODO: cognito vs api key auth
-TODO: RequestContext in request class to get auth creds
+There are ways to specify to use Cognito authorisation, or even a custom Lambda as authorizer, but for our example we want to make use of API Keys.
+
+1. Define the API keys and usage plans in `serverless.yml1`:
+
+```yaml
+provider:
+  ..
+  apiKeys:
+    - ${self:service}-${opt:stage, self:provider.stage}-roadmaps-apikey
+  usagePlan:
+    quota:
+      limit: 5000
+      offset: 2
+      period: MONTH
+    throttle:
+      burstLimit: 200
+      rateLimit: 100
+```
+
+2. Also set the API endpoints to `private: true` which need a key:
+   
+```yaml
+functions:
+  create-handler:
+    handler: com.serverless.handlers.CreateRoadmapsHandler
+    events:
+      - http:
+          path: roadmapitems
+          method: post
+          cors: true
+          private: true
+```
 
 ## 7. Monitoring
 

@@ -47,6 +47,123 @@ See code in `aws-java-roadmaps-api-1` folder.
    1. Add *JUnit* to `build.gradle`
    2. unit tests for Lambda Handlers
 
+```java
+package com.serverless;
+
+import com.amazonaws.services.lambda.runtime.ClientContext;
+import com.amazonaws.services.lambda.runtime.CognitoIdentity;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
+import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.log4j.Logger;
+
+import com.amazonaws.services.lambda.runtime.Context;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class HandlerTest {
+
+	private static final Logger LOG = Logger.getLogger(Handler.class);
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    private Handler subject;
+    private Context testContext;
+
+    @BeforeEach
+    public void setUp() {
+        subject = new Handler();
+        testContext = new Context() {
+            @Override
+            public String getAwsRequestId() {
+                return null;
+            }
+
+            @Override
+            public String getLogGroupName() {
+                return null;
+            }
+
+            @Override
+            public String getLogStreamName() {
+                return null;
+            }
+
+            // implement all methods of this interface and setup your test context.
+            // For instance, the function name:
+            @Override
+            public String getFunctionName() {
+                return "ExampleAwsLambda";
+            }
+
+            @Override
+            public String getFunctionVersion() {
+                return null;
+            }
+
+            @Override
+            public String getInvokedFunctionArn() {
+                return null;
+            }
+
+            @Override
+            public CognitoIdentity getIdentity() {
+                return null;
+            }
+
+            @Override
+            public ClientContext getClientContext() {
+                return null;
+            }
+
+            @Override
+            public int getRemainingTimeInMillis() {
+                return 0;
+            }
+
+            @Override
+            public int getMemoryLimitInMB() {
+                return 0;
+            }
+
+            @Override
+            public LambdaLogger getLogger() {
+                return null;
+            }
+        };
+    }
+
+    private static String converToJson(Object objectBody){
+        try {
+            return objectMapper.writeValueAsString(objectBody);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Test
+    void handleTestHandler() {
+        Map<String,Object> input = new HashMap<>();
+        input.put("testKey","test value");
+        APIGatewayProxyRequestEvent requestEvent = new APIGatewayProxyRequestEvent();
+        requestEvent.setBody(converToJson(input));
+        ApiGatewayResponse response = subject.handleRequest(requestEvent, testContext);
+        assertEquals(200, response.getStatusCode());
+
+        Response expectedResponse = new Response("Go Serverless v1.x! Your function executed successfully!", converToJson(input));
+        assertEquals(converToJson(expectedResponse), response.getBody());
+    }
+
+}
+```
+
 _Tips:_
 * Lots of examples: (https://github.com/serverless/examples)
 * Other project templates: (https://github.com/serverless/serverless/tree/master/lib/plugins/create/templates)
@@ -197,9 +314,124 @@ In `serverless.yml` we change `http.method` from `get` to `post`.
 ### 2.4 Using POJOs for requests
 
 The `APIGatewayProxyRequestEvent` can be a bit overwhelming, and need repetitive coding to parse the body into objects, etc. 
-We can actually define our own Java class for the request type.
+We can actually define our own Java class for the request type. The AWS SDK deals with the conversion to POJOs.
 
-TODO:
+See code in `aws-java-roadmaps-api-2b` folder.
+
+1. Define our very own `RoadmapRequest` class:
+
+```java
+package com.serverless.handlers;
+
+public class RoadmapRequest {
+    private String resource;
+    private String httpMethod;
+    private String body;
+    private RoadmapPathParameters pathParameters;
+
+    public RoadmapRequest(){}
+
+    public RoadmapRequest(String resource, String httpMethod, String body, RoadmapPathParameters pathParameters) {
+        this.resource = resource;
+        this.httpMethod = httpMethod;
+        this.body = body;
+        this.pathParameters = pathParameters;
+    }
+
+    public String getResource() {
+        return resource;
+    }
+
+    public void setResource(String resource) {
+        this.resource = resource;
+    }
+
+    public String getHttpMethod() {
+        return httpMethod;
+    }
+
+    public void setHttpMethod(String httpMethod) {
+        this.httpMethod = httpMethod;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public RoadmapPathParameters getPathParameters() {
+        if (pathParameters == null) return  new RoadmapPathParameters();
+        return pathParameters;
+    }
+
+    public void setPathParameters(RoadmapPathParameters pathParameters) {
+        this.pathParameters = pathParameters;
+    }
+    
+    public static class RoadmapPathParameters {
+        private String roadmapId;
+
+        public RoadmapPathParameters(){}
+
+        public RoadmapPathParameters(String roadmapId) {
+            this.roadmapId = roadmapId;
+        }
+
+        public String getRoadmapId() {
+            return roadmapId;
+        }
+
+        public void setRoadmapId(String roadmapId) {
+            this.roadmapId = roadmapId;
+        }
+    }
+}
+```
+
+2. Define a new lambda handler, so we start with a more domain oriented structure:
+
+```java
+package com.serverless.handlers;
+
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.serverless.ApiGatewayResponse;
+import com.serverless.Response;
+import org.apache.log4j.Logger;
+
+public class RoadmapsHandler implements RequestHandler<RoadmapRequest, ApiGatewayResponse> {
+
+    private static final Logger LOG = Logger.getLogger(RoadmapsHandler.class);
+
+    @Override
+    public ApiGatewayResponse handleRequest(RoadmapRequest request, Context context) {
+        LOG.info("received Roadmap API request: " + request);
+        Response responseBody = new Response("Roadmap request managed.", request.getBody());
+        return ApiGatewayResponse.builder()
+                .setStatusCode(200)
+                .setObjectBody(responseBody)
+                .build();
+    }
+}
+```
+
+3. Update `serverless.yml` to use new handler:
+
+```yaml
+functions:
+  roadmaps-handler:
+    handler: com.serverless.handlers.RoadmapsHandler
+    events:
+      - http:
+          path: hello
+          method: post
+          cors: true
+```
+
+4. Update unit tests, build, deploy and call.
 
 ## 3. Add More Business Logic
 
@@ -216,6 +448,11 @@ TODO - show different dynamoDB mapping approaches? or just DynamoDBMapper Also i
 ## 6. Securing Credentials
 
 TODO - show SSM usage
+
+## 7. Securing the API
+
+TODO: cognito vs api key auth
+TODO: RequestContext in request class to get auth creds
 
 ## 7. Monitoring
 

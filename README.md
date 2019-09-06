@@ -8,6 +8,10 @@ In which we build a *Roadmaps API* using:
   
 This project aims to show how to deploy a basic API using AWS serverless services, and [Serverless Framework](https://serverless.com) to deploy it.
 
+Now on *Github*: https://github.com/hermanlintvelt/aws-java-serverless
+
+_Follow up at [JWild 2020, April, Wilderness](https://wilderness-software.com/jwild-2020/)_
+
 ## Setup
 
 ### Installation Setup

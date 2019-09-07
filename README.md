@@ -1066,7 +1066,7 @@ public class RoadmapItemsRepository {
 }
 ```
 
-5. And we actually need to define the DynamoDB resources (tables and indexes) in `serverless.yml`:
+5. And we actually need to define the DynamoDB resources (tables and indexes) in `serverless.yml`, as well as the IAM permissions to access them:
    
 ```yaml
 ..

@@ -2,7 +2,7 @@
 
 In which we build a *Roadmaps API* using:
 
-* Java (8)
+* Java (11)
 * AWS Lambda, DynamoDB, API GW, SSM
 * Serverless.com
   
@@ -34,7 +34,7 @@ See code in `aws-java-roadmaps-api-1` folder.
 1. Create project with *Serverless*: `serverless create --template aws-java-gradle --name roadmaps-api -p aws-java-roadmaps-api`
 2. Update Project info:
    1. `build.gradle` : `baseName = "roadmaps-api"`
-   2. `build.gradle` : update gradle wrapper to `4.10.x` or `5.x`
+   2. `build.gradle` : update gradle wrapper to `5.x` or `6.x` (latest you prefer)
    3. `serverless.yml` : `package: artifact` : `hello.zip` -> `roadmaps-api.zip`
    4. `serverless.yml` : `funcions` : `hello` -> `roadmaps-handler`
    5. `serverless.yml` : update *AWS* profile: `profile: default` (_or other profile name used_)

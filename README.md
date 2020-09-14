@@ -37,7 +37,8 @@ See code in `aws-java-roadmaps-api-1` folder.
    2. `build.gradle` : update gradle wrapper to `5.x` or `6.x` (latest you prefer)
    3. `serverless.yml` : `package: artifact` : `hello.zip` -> `roadmaps-api.zip`
    4. `serverless.yml` : `funcions` : `hello` -> `roadmaps-handler`
-   5. `serverless.yml` : update *AWS* profile: `profile: default` (_or other profile name used_)
+   5. `serverless.yml` : update *AWS* profile: `provider: profile: default` (_or other profile name used_)
+   6. `serverless.yml` : update to use Java *11*: `provider: runtime: java11` (instead of default `java8`)
 3. Build it : `./gradlew build`
 4. Deploy it : `sls deploy`
 5. Run it : `sls invoke -f roadmaps-handler --stage development --logs --data '{"someKey":"someValue"}'`

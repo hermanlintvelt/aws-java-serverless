@@ -41,8 +41,6 @@ public interface DataRepository {
 
     /**
      * Add a new Expense instance to the repository.
-     * If this expense's id is null, then it will be filled in with a random UUID.
-     * If this expense's data is null,k then it will be filled in with today's date.
      * @param expense A non-null Expense instance
      * @return The Expense instance you added
      */

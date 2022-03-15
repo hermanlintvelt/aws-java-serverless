@@ -44,6 +44,7 @@ public class InMemoryRepository implements DataRepository {
 
     @Override
     public Expense addExpense(Expense expense) {
+        addPerson(expense.getPaidByPerson());
         expenses.add(expense);
         return expense;
     }

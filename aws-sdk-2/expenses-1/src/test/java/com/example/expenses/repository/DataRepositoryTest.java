@@ -1,0 +1,51 @@
+package com.example.expenses.repository;
+
+import com.example.expenses.model.Person;
+import com.example.expenses.repository.memory.InMemoryRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+
+class DataRepositoryTest {
+    private DataRepository dataRepository;
+
+    @BeforeEach
+    void setUp() {
+        dataRepository = new InMemoryRepository();
+    }
+
+    @Test
+    @DisplayName("A person not already added to repository should not be found")
+    void unknownPersonNotFound() {
+        assertThat(dataRepository.findPerson("unknown@mail.com")).isEmpty();
+    }
+
+    @Test
+    @DisplayName("A new person added to repository should be found")
+    void addPersonTest() {
+        Person me = new Person("me@me.com");
+        dataRepository.addPerson(me);
+        assertThat(dataRepository.findPerson("me@me.com")).isNotEmpty().contains(me);
+    }
+
+
+    @Test
+    @DisplayName("If multiple people are added to repository, then they should be retrieved")
+    void allPersons() {
+        Person me = new Person("me@me.com");
+        dataRepository.addPerson(me);
+        Person you = new Person("you@me.com");
+        dataRepository.addPerson(you);
+
+        List<Person> people = dataRepository.allPersons();
+        assertThat(people).isNotNull();
+        assertThat(people).asList().isNotEmpty();
+        assertThat(people).asList().containsOnly(me, you);
+
+    }
+}

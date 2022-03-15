@@ -1,6 +1,6 @@
 *.class
 .gradle
-*/build/
+**/build/
 */bin/
 */.settings/
 .project

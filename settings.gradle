@@ -1,0 +1,3 @@
+include 'aws-sdk-2:expenses-1'
+findProject(':aws-sdk-2:expenses-1')?.name = 'expenses-1'
+

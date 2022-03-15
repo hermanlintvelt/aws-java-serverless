@@ -1,0 +1,51 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+
+dependencies {
+    compile (
+            'org.apache.logging.log4j:log4j-api:2.17.2',
+            'org.apache.logging.log4j:log4j-core:2.17.2',
+            'com.fasterxml.jackson.core:jackson-core:2.13.1',
+            'com.fasterxml.jackson.core:jackson-databind:2.13.1',
+            'com.fasterxml.jackson.core:jackson-annotations:2.13.1'
+    )
+
+    testImplementation(
+            'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    )
+    testRuntimeOnly(
+            'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    )
+}
+
+test {
+    environment "STAGE","development"
+    useJUnitPlatform()
+}
+
+// Task for building the zip file for upload
+task buildZip(type: Zip) {
+    // Using the Zip API from gradle to build a zip file of all the dependencies
+    //
+    // The path to this zip file can be set in the serverless.yml file for the
+    // package/artifact setting for deployment to the S3 bucket
+    //
+    // Link: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Zip.html
+
+    // set the base name of the zip file
+    baseName = "expenses-service"
+    from compileJava
+    from processResources
+    into('lib') {
+        from configurations.runtime
+    }
+}
+
+build.dependsOn buildZip
+

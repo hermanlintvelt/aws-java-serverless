@@ -3,7 +3,7 @@
 In which we build a *Roadmaps API* using:
 
 * Java (11)
-* AWS Lambda, DynamoDB, API GW, SSM
+* AWS Lambda, DynamoDB, API GW, SSM by using the _AWS SDK for Java v1.x_
 * Serverless.com
   
 This project aims to show how to deploy a basic API using AWS serverless services, and [Serverless Framework](https://serverless.com) to deploy it.

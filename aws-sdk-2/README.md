@@ -3,7 +3,7 @@
 In which we build a *Roadmaps API* using:
 
 * Java (11)
-* AWS Lambda, DynamoDB, API GW, SSM
+* AWS Lambda, DynamoDB, API GateWay, SNS, using the [AWS SDK for Java v2.x](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/home.html) 
 * Serverless.com
 
 This project aims to show how to deploy a basic API using AWS serverless services, and [Serverless Framework](https://serverless.com) to deploy it.
@@ -25,6 +25,18 @@ In order to do this tutorial, you need to install a few things:
 
 ## The Project
 
-TODO: notes on expenser project
+A basic API for tracking expenses.
 
-TODO: tut steps - gradle lib versions, etc etc
+* We will start with an API that allows to retrieve, create, update and delete expenses.
+* We will then create a second service that listens to these expense events, and keep a list of expense totals per person. 
+
+### Iterations
+
+1. Define some domain classes with tests
+2. Create a simple AWS Lambda function that returns mocked expense data
+   1. Implement a simple way of testing the lambda function
+3. Add an AWS API Gateway endpoint to call the Lambda function and test that via Postman
+4. Create a new API endpoint with Lambda function for creating & updating expenses
+5. Persist the expenses to DynamoDB and change Lambda to use the persisted data
+6. Create a Lambda function that listens to expense events via AWS Simple Notification Service and keep track of expense totals per person - show how it behaves via AWS Cloudwatch
+7. (if time) hook up API Gateway endpoint to expense totals lambda

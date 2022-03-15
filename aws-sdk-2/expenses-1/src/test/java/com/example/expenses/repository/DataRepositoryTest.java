@@ -71,7 +71,6 @@ class DataRepositoryTest {
         assertThat(foundExpenses).isNotNull();
         assertThat(foundExpenses).asList().isNotEmpty();
         assertThat(foundExpenses).asList().containsOnly(expense1, expense2);
-
     }
 
 }

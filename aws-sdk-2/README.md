@@ -32,7 +32,7 @@ A basic API for tracking expenses.
 
 ### Iterations
 
-1. [Define some domain classes with tests](expenses-1/README.md)
+1. [Define some domain classes with tests](expenses-1)
 2. Create a simple AWS Lambda function that returns mocked expense data
    1. Implement a simple way of testing the lambda function
 3. Add an AWS API Gateway endpoint to call the Lambda function and test that via Postman

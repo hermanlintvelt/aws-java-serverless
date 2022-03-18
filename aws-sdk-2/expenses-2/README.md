@@ -4,7 +4,6 @@
 
 Goal: Implement a basic AWS Lambda function that returns mocked expense data.
 
-
 Steps:
 1. Create `serverless.yml`
 2. `maven` vs `gradle` file
@@ -17,6 +16,8 @@ TODO: quick intro
 ### Maven vs Gradle
 TODO: all the same, as long as you end up with proper zip artifact (show contents?)
 TODO: AWS Java SDK dependencies needed
+
+#### BOM vs individual jars
 TODO: for dependencies see: https://mvnrepository.com/artifact/software.amazon.awssdk/bom/2.17.146
 * using BOM vs individual SDK libs
 

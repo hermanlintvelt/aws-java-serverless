@@ -33,8 +33,7 @@ A basic API for tracking expenses.
 ### Iterations
 
 1. [Define some domain classes with tests](expenses-1)
-2. Create a simple AWS Lambda function that returns mocked expense data
-   1. Implement a simple way of testing the lambda function
+2. [Create a simple AWS Lambda function that returns mocked expense data](expenses-2)
 3. Add an AWS API Gateway endpoint to call the Lambda function and test that via Postman
 4. Create a new API endpoint with Lambda function for creating & updating expenses
 5. Persist the expenses to DynamoDB and change Lambda to use the persisted data

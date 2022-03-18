@@ -8,7 +8,7 @@ Steps:
 1. Create `Expense` and `Person` model classes - with tests
 2. Create a repository interface (`DataRepository`) for creating and retrieving expenses and people - with tests
 3. Implement a simple in-memory way of storing data that implements `DataRepository` (`InMemoryRepository`)
-4. Create a simple facade for working with my domain (`ExpenseService`)
+4. Create a simple facade for working with the expense domain (`ExpenseAggregate`)
 
 ### TODOs
 * explore Logging already, or only later?

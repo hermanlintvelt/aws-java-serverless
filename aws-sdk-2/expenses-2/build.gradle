@@ -1,27 +1,20 @@
-apply plugin: 'java'
+plugins {
+    id 'java'
+}
 
 repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 1.11
-targetCompatibility = 1.11
-
 dependencies {
-    compile (
-            'org.apache.logging.log4j:log4j-api:2.17.2',
+    implementation(
             'org.apache.logging.log4j:log4j-core:2.17.2',
-            'com.fasterxml.jackson.core:jackson-core:2.13.1',
-            'com.fasterxml.jackson.core:jackson-databind:2.13.1',
-            'com.fasterxml.jackson.core:jackson-annotations:2.13.1'
+            'org.apache.logging.log4j:log4j-api:2.17.2',
+            'org.apache.logging.log4j:log4j-slf4j-impl:2.17.2'
     )
-
-    testImplementation(
-            'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    )
-    testRuntimeOnly(
-            'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    )
+    testImplementation 'org.assertj:assertj-core:3.22.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 test {
@@ -39,13 +32,20 @@ task buildZip(type: Zip) {
     // Link: https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Zip.html
 
     // set the base name of the zip file
-    baseName = "expenses-service"
+    archiveBaseName = "expenses-service"
     from compileJava
     from processResources
     into('lib') {
-        from configurations.runtime
+        from configurations.runtimeOnly
     }
 }
 
 build.dependsOn buildZip
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '7.1'
+}
+
+task prepareKotlinBuildScriptModel {
+}
 

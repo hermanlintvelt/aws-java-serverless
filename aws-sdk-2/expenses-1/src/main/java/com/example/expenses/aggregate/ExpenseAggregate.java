@@ -1,4 +1,4 @@
-package com.example.expenses.service;
+package com.example.expenses.aggregate;
 
 import com.example.expenses.model.Expense;
 import com.example.expenses.model.Person;
@@ -12,8 +12,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class ExpenseService {
-    private static final Logger LOG = LogManager.getLogger(ExpenseService.class);
+public class ExpenseAggregate {
+    private static final Logger LOG = LogManager.getLogger(ExpenseAggregate.class);
     private final DataRepository dataRepository = new InMemoryRepository();
 
     /**

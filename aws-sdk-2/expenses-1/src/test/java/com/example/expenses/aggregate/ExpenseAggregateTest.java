@@ -1,4 +1,4 @@
-package com.example.expenses.service;
+package com.example.expenses.aggregate;
 
 import com.example.expenses.model.Expense;
 import com.example.expenses.model.Person;
@@ -10,14 +10,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-class ExpenseServiceTest {
-    private ExpenseService expenseService;
+class ExpenseAggregateTest {
+    private ExpenseAggregate expenseAggregate;
 
     @BeforeEach
     void setUp() {
-        expenseService = new ExpenseService();
+        expenseAggregate = new ExpenseAggregate();
     }
 
     @Test
@@ -25,8 +24,8 @@ class ExpenseServiceTest {
     void createExpense() {
         Person me = new Person("me@me.com");
         Expense expense = new Expense(BigDecimal.valueOf(150.0), me);
-        expenseService.createExpense(expense);
-        assertThat(expenseService.getAllExpenses()).asList().contains(expense);
+        expenseAggregate.createExpense(expense);
+        assertThat(expenseAggregate.getAllExpenses()).asList().contains(expense);
     }
 
     @Test
@@ -34,11 +33,11 @@ class ExpenseServiceTest {
     void findExpensesPaidBy() {
         Person me = new Person("me@me.com");
         Expense expense1 = new Expense(BigDecimal.valueOf(150.0), me);
-        expenseService.createExpense(expense1);
+        expenseAggregate.createExpense(expense1);
         Expense expense2 = new Expense(BigDecimal.valueOf(80.0), me);
-        expenseService.createExpense(expense2);
+        expenseAggregate.createExpense(expense2);
 
-        List<Expense> foundExpenses = expenseService.findExpensesPaidBy(me.getEmail());
+        List<Expense> foundExpenses = expenseAggregate.findExpensesPaidBy(me.getEmail());
         assertThat(foundExpenses).isNotNull();
         assertThat(foundExpenses).asList().isNotEmpty();
         assertThat(foundExpenses).asList().containsOnly(expense1, expense2);
@@ -47,6 +46,6 @@ class ExpenseServiceTest {
     @Test
     @DisplayName("Searching for expense by non-existent person should return empty list")
     void findNonExistentPersonExpense(){
-        assertThat(expenseService.findExpensesPaidBy("unknown@mail.com")).asList().isEmpty();
+        assertThat(expenseAggregate.findExpensesPaidBy("unknown@mail.com")).asList().isEmpty();
     }
 }

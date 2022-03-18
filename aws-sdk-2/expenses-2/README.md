@@ -34,7 +34,7 @@ TODO: AWS Lambda dedpencies needed
 
 #### Java Zip file
 Your `gradle` (or `mvn`) build must end up with a zip file that contains your compiled classes, as well as all libraries that you are dependent on (in a `libs` folder), as per the image below.
-[](java-build-artifact.png)
+![](java-build-artifact.png)
 
 TODO: iter3+: to access AWS SDK for other AWS services for dependencies see: https://mvnrepository.com/artifact/software.amazon.awssdk/bom/2.17.146
 * using BOM vs individual SDK libs

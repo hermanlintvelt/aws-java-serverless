@@ -21,7 +21,8 @@ In order to do this tutorial, you need to install a few things:
 
 ### Configuration Setup
 
-* Create AWS account and setup credentials for *Serverless* using [this great article on how to setup Serverless to work with AWS](https://serverless.com/framework/docs/providers/aws/guide/credentials/).
+* Create and AWS account and do the necessary setup (you can follow the `Setting Up` steps in [the AWS SDK for Java 2.x Quick Start guide](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/get-started.html))
+* Now setup credentials for *Serverless* using [this great article on how to setup Serverless to work with AWS](https://serverless.com/framework/docs/providers/aws/guide/credentials/).
 
 ## The Project
 

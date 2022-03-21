@@ -50,8 +50,6 @@ package:
 
 functions:
   get-expenses:
-    handler: com.example.expenses.lambda.GetExpensesAsStringHandler
-  get-expenses-json:
     handler: com.example.expenses.lambda.GetExpensesAsJsonHandler
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

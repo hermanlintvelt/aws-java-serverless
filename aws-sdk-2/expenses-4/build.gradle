@@ -14,6 +14,9 @@ dependencies {
             'com.amazonaws:aws-lambda-java-core:1.2.1',
             'com.amazonaws:aws-lambda-java-events:3.11.0',
             'com.amazonaws:aws-lambda-java-log4j2:1.5.1',
+            "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}",
+            "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",
+            "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}",
     )
     testImplementation 'org.assertj:assertj-core:3.22.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'

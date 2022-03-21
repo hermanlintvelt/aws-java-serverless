@@ -112,7 +112,7 @@ We have not yet linked any events (or "triggers) to our lambda function, but we 
 
 * First we deploy it:`sls deploy` (or `serverless deploy`)
 * We can list deployed functions: `sls deploy list functions`
-* We can invoke the function directly: `sls invoke -f expenses-service-development-hello -d "say something"`
+* We can invoke the function directly: `sls invoke -f hello -d "say something"`
 
 Refer to [Logging Basics](#logging-basics) for how to view the output from the logging when functions are invoked. 
 

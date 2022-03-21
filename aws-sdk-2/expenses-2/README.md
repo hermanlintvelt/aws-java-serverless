@@ -24,20 +24,42 @@ If you come across the name "The Serverless Framework" or you see a file `server
 
 [Serverless.com](https://serverless.com) provides easy to use tooling, with 3rd party plugins for extended functionality, that makes it very easy to setup various AWS resources, and get your code deployed as [AWS Lambda](https://aws.amazon.com/lambda/) functions.
 
-It supports certain languages better than others, and unfortunately the getting-started templates for Java and Kotlin is quite outdated. (So use the reference `serverless.yml` and `build.gradle` files from this tut rather than the ones from the serverless.com templates).
+It supports certain languages better than others, and unfortunately the getting-started templates for Java and Kotlin is quite outdated. 
 
-TODO: short example serverless.yml snippet
+The `serverless.yml` file is used by the Serverless framework to configure the necessary services on AWS, and know which code artifacts to upload and deploy as AWS Lambda functions.
+
+* Refer to [serverless.yml](serverless.yml) for an example.
 
 ### Maven vs Gradle - building the Java deployment artifact
-TODO: all the same, as long as you end up with proper zip artifact (show contents?)
-TODO: AWS Lambda dedpencies needed
+AWS Lambda support code from various programming languages. You can even compile a native binary and upload that as a custom container. 
+
+For this tutorial, we deploy our code to AWS's lambda runtime for Java 11. In order to do this, we need to provide our compiles code, as well as any libraries (`.jar` files) that our code needs to run.
+
+In order to implement AWS Lambda functions in Java, we need to include the following libraries as dependencies:
+
+* `com.amazonaws:aws-lambda-java-core` - the core classes we need to implement a Lambda function in Java
+* `com.amazonaws:aws-lambda-java-events` - a library containing various event classes that can be used to trigger functions,
+* `com.amazonaws:aws-lambda-java-log4j2` - a library that makes it easier to log requests and responses from/to our lambda functions.
+
+_Note: we do not need the *AWS SDK for Java V2* libraries yet when just implementing a Lambda function. We only need that when we make use of other AWS services from our lambda function code. We cover that in a next iteration._
+
+_You can check for the latest versions at the [Maven Repository](https://mvnrepository.com). At the time of this README file update it was:
+```
+com.amazonaws:aws-lambda-java-core:1.2.1
+com.amazonaws:aws-lambda-java-events:3.11.0
+com.amazonaws:aws-lambda-java-log4j2:1.5.1
+```
+
+In our example we are using [Gradle](https://gradle.org) to manage dependencies, compile our code, and package the zip file that needs to be deployed.
+The _gradle_ build creates [a zip file](#java-zip-file) that is referred to from the `serverless.yml` file, and uploaded to AWS as part of the deployment.
+
+* Refer to the [build.gradle](build.gradle) file for an example.
+
+_Note you can also use [Maven](https://maven.org) to build your Java code and package it in a zip file, as long as you end up with the content depicted in the [Java Zip File](#java-zip-file) section._
 
 #### Java Zip file
 Your `gradle` (or `mvn`) build must end up with a zip file that contains your compiled classes, as well as all libraries that you are dependent on (in a `libs` folder), as per the image below.
 ![](java-build-artifact.png)
-
-TODO: iter3+: to access AWS SDK for other AWS services for dependencies see: https://mvnrepository.com/artifact/software.amazon.awssdk/bom/2.17.146
-* using BOM vs individual SDK libs
 
 ### Lambda Handlers Introduction
 TODO: short intro to Lambdas

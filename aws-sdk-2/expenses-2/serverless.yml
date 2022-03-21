@@ -12,24 +12,21 @@
 # Happy Coding!
 
 service: expenses-service
-# app and org for use with dashboard.serverless.com
-#app: expenses-service
-#org: your-org-name
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
 frameworkVersion: '2'
 
 provider:
-  name: aws
-  profile: default
-  runtime: java11
+  name: aws #indicate we are deploying to AWS
+  profile: default #this much match a profile as defined in ~/.aws/credentials
+  runtime: java11 #using Java 11
   lambdaHashingVersion: 20201221
-  stage: development
-  region: af-south-1
+  stage: development #use `development` environment - useful when you want to deploy different environments/stages
+  region: af-south-1 #the AWS region to deploy to
   environment:
     STAGE: ${self:provider.stage} # you can define service wide environment variables here, e.g. the `STAGE` env var will allow my lambda handler code to check on which environment it is running
-  iamRoleStatements:
+  iamRoleStatements: #the permissions needed by the Lambda functions to access other AWS resources
     - Effect: Allow
       Action:
         - xray:PutTraceSegments

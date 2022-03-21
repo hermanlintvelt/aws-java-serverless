@@ -40,3 +40,8 @@ A basic API for tracking expenses.
 5. Persist the expenses to DynamoDB and change Lambda to use the persisted data
 6. Create a Lambda function that listens to expense events via AWS Simple Notification Service and keep track of expense totals per person - show how it behaves via AWS Cloudwatch
 7. (if time) hook up API Gateway endpoint to expense totals lambda
+
+## Architecture Phases
+A quick overview of how we progressed with this project on deployment architecture side.
+
+![](docs/expenses_architecture_phases.png)

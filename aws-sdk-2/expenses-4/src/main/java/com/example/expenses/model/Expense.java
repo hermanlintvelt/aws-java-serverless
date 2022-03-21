@@ -1,11 +1,5 @@
 package com.example.expenses.model;
 
-import com.example.expenses.lambda.json.LocalDateDeserializer;
-import com.example.expenses.lambda.json.LocalDateSerializer;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -14,11 +8,7 @@ import java.util.UUID;
 public class Expense {
     private final UUID id;
     private final BigDecimal amount;
-
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = LocalDateSerializer.class)
     private final LocalDate date;
-
     private final Person paidByPerson;
 
     public Expense(UUID id, BigDecimal amount, LocalDate date, Person paidByPerson) {
@@ -40,7 +30,6 @@ public class Expense {
         return amount;
     }
 
-    @JsonProperty("date")
     public LocalDate getDate() {
         return date;
     }

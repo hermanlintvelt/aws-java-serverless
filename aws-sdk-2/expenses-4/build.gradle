@@ -17,6 +17,7 @@ dependencies {
             "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}",
             "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",
             "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}",
+            "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     )
     testImplementation 'org.assertj:assertj-core:3.22.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'

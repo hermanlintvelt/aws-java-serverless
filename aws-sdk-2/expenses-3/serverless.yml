@@ -44,7 +44,7 @@ provider:
 #              - function:${self:service}-${self:provider.stage}-*
 
 
-# you can add packaging information here
+# this is the binary package that containst the code for the various lambda handlers, and dependency jars
 package:
   artifact: build/distributions/expenses-service.zip
 

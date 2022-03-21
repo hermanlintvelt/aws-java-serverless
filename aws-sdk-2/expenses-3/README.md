@@ -2,8 +2,19 @@
 
 ## Expense Service Tutorial - Iteration 3
 
-## TODOs
+Goal: Implement lambda functions for retrieving mocked expenses
 
-*iter3+: to access AWS SDK for other AWS services for dependencies see: https://mvnrepository.com/artifact/software.amazon.awssdk/bom/2.17.146
-* using BOM vs individual SDK libs
+Steps:
+1. [Implement a lambda for retrieving all expenses](#lambda-for-retrieving-all-expenses)
+2. [Update handler to return expenses as JSON](#return-expenses-as-json)
+3. [Implement a simple way of testing lambda](#simple-testing-approach)
+
+### Lambda for retrieving all expenses
+TODO: handler to get all (mocked) Expenses - return as String response?
+
+### Return expenses as JSON
+TODO: how to change handler to return as JSON
+
+### Simple testing approach
+TODO: testing without local mocked services
 

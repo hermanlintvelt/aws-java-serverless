@@ -2,15 +2,13 @@
 
 ## Expense Service Tutorial - Iteration 2
 
-Goal: Implement a basic AWS Lambda function that returns mocked expense data.
+Goal: Implement and deploy a basic AWS Lambda function.
 
 Steps:
 1. [Create `serverless.yml`](#serverlessyml---setting-up-cloud-resources)
 2. [Create out `build.gradle`](#maven-vs-gradle---building-the-java-deployment-artifact) or `pom.xml` (maven) file
 3. [Implement a basic Lambda handler](#lambda-handlers-introduction)
 4. [Deploy and run the Lambda function](#how-to-deploy-and-run-our-lambda)
-5. [Implement Expenses Lamnbda handler](#expenses-lambda-handlers)
-6. [Implement a simple way of testing lambda](#simple-testing-approach)
 
 Also see the [Tips and Tricks](#tips--tricks) for additional info that might be handy in your adventure.
 
@@ -62,28 +60,67 @@ Your `gradle` (or `mvn`) build must end up with a zip file that contains your co
 ![](java-build-artifact.png)
 
 ### Lambda Handlers Introduction
-TODO: short intro to Lambdas
-TODO: basic 'Hello World' handler 'HelloHandler'
+An AWS Lambda function is basically a piece of code that can handle one or more events ("triggers), which will cause the code to be invoked. From a design point of view you want these functions to be simple and *do only one thing*. Thinks of it almost like a class with a `main` method, but instead of you running the class directly, AWS will run the code when you trigger it in some way.
+
+Some ways in which you can cause this lambda function to run, are:
+* invoke it directly (via a tool, or directly in AWS web console)
+* link it to an HTTP endpoint via [AWS API Gateway](https://aws.amazon.com/api-gateway/), so that a request to that endpoint will trigger the lambda function
+* link it to a specific [AWS S3](https://aws.amazon.com/s3/) Storage Bucket, so that e.g. a file uploaded there will cause the lambda function to be called
+* link it to a specific [SQS](https://aws.amazon.com/sqs/) queue or [SNS](https://aws.amazon.com/sns/) topic, so that a message to that queue/topic will invoke the lambda function.
+* and many others..
+
+Let us start with a very simple implementation of a *Lambda Handler* (the term "lambda handler" is used for the code that is called directly when invoking a lambda function).
+
+```java
+package com.example.expenses.lambda;
+
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+public final class HelloHandler implements RequestHandler<String, String> {
+    private static final Logger LOG = LogManager.getLogger(HelloHandler.class);
+
+    @Override
+    public String handleRequest(String request, Context context) {
+        LOG.info("I received a request: "+request);
+        LOG.info("My execution context is: "+context.toString());
+        return request;
+    }
+}
+```
+
+We basically implement a class with a `handleRequest` method. This method gets called by the AWS Java runtime when a lambda function is invoked. To help define a standard interface, we need to implement the `RequestHandler` interface, which is part of the `aws-lambda-java-core` library. It makes use of generics to indicate the input type (which we set as `String`) and the response type (also `String` for our example) of the function. (We will see other options later.)
+
+The `handleRequest` method also gets a `Context` parameter which contains information about the execution context for the lambda function. 
+
+Our `HelloHandler` simply logs the string request it received, and also returns it as the response. 
+
+#### Configuring our Lambda Function
+AWS needs to know about `HelloHandler`, and since we are using _Serverless_ for our deployments, we need to define it in the `serverless.yml` file:
+```yaml
+functions:
+  hello:
+    handler: com.example.expenses.lambda.HelloHandler
+```
+
+This defines a lambda function with the name `expense-service-development-hello` (_service-stage-functionName_) which, when invoked, will call the `handleRequest` method of an instance of the `HelloHandler` class with the input request. 
 
 ### How to deploy and run our lambda
-TODO: using sls to deploy
-* Deploy:`sls deploy` (or `serverless deploy`)
-* List deployed functions: `sls deploy list functions`
-* Invoke function: `sls invoke -f expenses-service-development-hello`
+We have not yet linked any events (or "triggers) to our lambda function, but we can invoke it directly to try it out. 
 
-### Expenses Lambda Handlers
-TODO: handler to create Expense
-TODO: something about events and mapping to Java POJOs approaches
-TODO: handler to get all Expenses
-TODO: if time, handler to find expense
+* First we deploy it:`sls deploy` (or `serverless deploy`)
+* We can list deployed functions: `sls deploy list functions`
+* We can invoke the function directly: `sls invoke -f expenses-service-development-hello -d "say something"`
 
-### Simple testing approach
-TODO: testing without local mocked services
+Refer to [Logging Basics](#logging-basics) for how to view the output from the logging when functions are invoked. 
 
 ## Tips & Tricks
 
 ### Logging basics
 TODO: https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/logging-slf4j.html
+_Note: you can also view the `LOG` output from running the function code in [AWS Cloudwatch](https://aws.amazon.com/cloudwatch/)._
 
 ### On Environments
 TODO something on dev, vs staging, vs prod environments and how to manage it 
@@ -91,3 +128,6 @@ TODO something on dev, vs staging, vs prod environments and how to manage it
 ### Java Code examples TODO: move to later iteration
 Various code examples exist for the various parts of the AWS SDK.
 Refer to the [AWS Code Samples for Java (SDK V2)](https://docs.aws.amazon.com/code-samples/latest/catalog/code-catalog-javav2.html) doc.
+
+### Lambda Layers
+TODO

@@ -24,7 +24,8 @@ public class CreateExpenseHandlerTest {
     @org.junit.jupiter.api.BeforeEach
     public void setUp() {
         //testHandler = new CreateExpenseHandlerStart();
-        testHandler = new CreateExpenseHandlerJsonNode();
+//        testHandler = new CreateExpenseHandlerJsonNode();
+        testHandler = new CreateExpenseHandlerRequestObject();
         testContext = new NullContext();
     }
 

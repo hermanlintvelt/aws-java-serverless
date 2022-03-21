@@ -1,9 +1,14 @@
 package com.example.expenses.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Person {
     protected final String email;
 
-    public Person(String email) {
+    @JsonCreator
+    public Person(
+            @JsonProperty("email") String email) {
         this.email = email;
     }
 

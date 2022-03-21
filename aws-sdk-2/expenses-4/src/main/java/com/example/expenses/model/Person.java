@@ -25,4 +25,11 @@ public class Person {
     public int hashCode() {
         return email.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "email='" + email + '\'' +
+                '}';
+    }
 }

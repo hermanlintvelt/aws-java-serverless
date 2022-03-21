@@ -38,7 +38,7 @@ A basic API for tracking expenses.
 3. [Implement lambda functions for retrieving expenses](expenses-3)
 4. [Add an AWS API Gateway endpoint to call the Lambda function and test that via Postman](expenses-4)
 5. [Create a new API endpoint with Lambda function for creating expenses](expenses-5)
-6. Persist the expenses to DynamoDB and change Lambda to use the persisted data
+6. [Persist the expenses to DynamoDB and change Lambdas to use the persisted data](expenses-6)
 7. Create a Lambda function that listens to expense events via AWS Simple Notification Service and keep track of expense totals per person - show how it behaves via AWS Cloudwatch
 8. (if time) hook up API Gateway endpoint to expense totals lambda
 

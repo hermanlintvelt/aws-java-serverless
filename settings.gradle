@@ -8,4 +8,6 @@ include 'aws-sdk-2:expenses-4'
 findProject(':aws-sdk-2:expenses-4')?.name = 'expenses-4'
 include 'aws-sdk-2:expenses-5'
 findProject(':aws-sdk-2:expenses-5')?.name = 'expenses-5'
+include 'aws-sdk-2:expenses-6'
+findProject(':aws-sdk-2:expenses-6')?.name = 'expenses-6'
 

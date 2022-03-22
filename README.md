@@ -3,7 +3,7 @@
 In which we build a AWS Serverless backend using:
 
 * Java (11)
-* AWS Lambda, DynamoDB, API Gateway, SNS
+* AWS Lambda, DynamoDB, API Gateway, SQS
 * Serverless.com
 
 ## AWS SDK for Java 1.x

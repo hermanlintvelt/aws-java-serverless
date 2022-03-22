@@ -17,7 +17,7 @@ class DataRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        dataRepository = new InMemoryRepository();
+        dataRepository = DataRepositoryFactory.getDataRepository();
     }
 
     @Test
@@ -70,7 +70,7 @@ class DataRepositoryTest {
         List<Expense> foundExpenses = dataRepository.findExpensesPaidBy(me);
         assertThat(foundExpenses).isNotNull();
         assertThat(foundExpenses).asList().isNotEmpty();
-        assertThat(foundExpenses).asList().containsOnly(expense1, expense2);
+        assertThat(foundExpenses).asList().contains(expense1, expense2);
     }
 
 }

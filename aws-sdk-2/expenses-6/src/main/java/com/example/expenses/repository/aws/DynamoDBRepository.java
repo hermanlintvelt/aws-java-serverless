@@ -33,6 +33,10 @@ public class DynamoDBRepository implements DataRepository {
 
     private final DynamoDbTable<ExpenseRecord> expensesTable;
 
+    /**
+     * We implement the constructor to configure the actual DynamoDB table reference.
+     * The DynamoDB client lib create the table if it does not exist yet, using the schema as defined by the properties of `ExpenseRecord` class.
+     */
     public DynamoDBRepository(){
         expensesTable = DB_ENHANCED_CLIENT.table("expenses-"+System.getenv("STAGE"), TableSchema.fromBean(ExpenseRecord.class));
     }
@@ -84,6 +88,7 @@ public class DynamoDBRepository implements DataRepository {
 
     @Override
     public List<Expense> allExpenses() {
-        return null;
+        LOG.info("Retrieving all expenses from DynamoDB");
+        return expensesTable.scan().items().stream().map(ExpenseRecord::asExpense).collect(Collectors.toUnmodifiableList());
     }
 }

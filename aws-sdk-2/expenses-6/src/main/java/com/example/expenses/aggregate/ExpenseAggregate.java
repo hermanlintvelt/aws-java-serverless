@@ -3,6 +3,7 @@ package com.example.expenses.aggregate;
 import com.example.expenses.model.Expense;
 import com.example.expenses.model.Person;
 import com.example.expenses.repository.DataRepository;
+import com.example.expenses.repository.DataRepositoryFactory;
 import com.example.expenses.repository.memory.InMemoryRepository;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 public class ExpenseAggregate {
     private static final Logger LOG = LogManager.getLogger(ExpenseAggregate.class);
-    private final DataRepository dataRepository = new InMemoryRepository();
+    private final DataRepository dataRepository = DataRepositoryFactory.getDataRepository();
 
     public void createMockedData() {
         Person me = new Person("me@me.com");

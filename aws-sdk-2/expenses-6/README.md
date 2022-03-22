@@ -6,7 +6,7 @@ Goal: Persist the expenses to DynamoDB and change Lambdas to use the persisted d
 
 Steps:
 1. [Persisting to DynamoDB](#persisting-to-dynamodb)
-2. [Configure DynamoDB Tables](#configure-the-dynamodb-tables)
+2. [Configure the Lambda permissions](#configure-the-lambda-permissions)
 3. [How to test locally](#how-to-test-locally)
 4. [Update lambda handlers to use new persistence](#update-lambda-handlers-to-use-new-persistence)
 
@@ -33,8 +33,27 @@ There are two ways to include the dependencies needed to make use of the SDK:
 _Note: if you want to see a list of all the individual jar files, visit [the BOM maven listing](https://mvnrepository.com/artifact/software.amazon.awssdk/bom/2.17.152)._
 
 #### DynamoDBBean for Expense
-In order to use the enhanced DynamoDB client, we need to define a basic java class that represents the data we want to store. This is done by adding some specific annotations to the class, and ensuring the types of the properties are understood by the dynamoDB client lib, and the class is called a _DynamoDBBean_. We already have an `Expense` domain object, and while it is possible to annotate `Expense` in this way, we do not want to mix our persistence logic and implementation with our domain logic, so we rather implement a separate class, `ExpenseRecord` (in the name of separatio of concerns).
+In order to use the enhanced DynamoDB client, we need to define a basic java class that represents the data we want to store. This is done by adding some specific annotations to the class, and ensuring the types of the properties are understood by the dynamoDB client lib, and the class is called a _DynamoDBBean_. We already have an `Expense` domain object, and while it is possible to annotate `Expense` in this way, we do not want to mix our persistence logic and implementation with our domain logic, so we rather implement a separate class, `ExpenseRecord` (in the name of separation of concerns).
 
+```java
+@DynamoDbBean
+public class ExpenseRecord {
+    private String id; //not UUID, we will convert it
+    private String paidByPersonEmail; //not Person - we only store the person's email address
+    private BigDecimal amount;
+    private LocalDate date; //Instant gives us easy way to ensure UTC time
+
+    //...
+
+    //The @DynamoDbPartitionKey annotation indicates this is the unique lookup key used for a record
+    @DynamoDbPartitionKey
+    public String getId() {
+        return id;
+    }
+    
+    //...
+}
+```
 
 
 #### DynamoDBRepository
@@ -52,13 +71,58 @@ public class DynamoDBRepository implements DataRepository {
 }
 ```
 
-TODO
+Then we must setup the DynamoDB table reference. The DynamoDB client lib creates the table if it does not exist yet, using the schema as defined by the properties of `ExpenseRecord` class.
 
-### Configure the DynamoDB Tables
-TODO: serverless.yml config for DynamoDB
+```java
+public class DynamoDBRepository implements DataRepository {
+    //...
+    private final DynamoDbTable<ExpenseRecord> expensesTable;
+
+    public DynamoDBRepository() {
+        expensesTable = DB_ENHANCED_CLIENT.table("expenses-" + System.getenv("STAGE"), TableSchema.fromBean(ExpenseRecord.class));
+    }
+}
+```
+
+Lastly we implement the `addExpense`, `findExpensesPaidBy` and `allExpenses` methods to use the DynamoDB client api to insert data and retrieve data. 
+You can [read more about the various requests and queries in the AWS doc](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/examples-dynamodb-enhanced.html).
+
+### Configure the Lambda permissions
+In order for a lambda function to be able to access a DynamoDB table, it needs the correct permissions. 
+We can assign permissions in the `serverless.yml` file:
+
+```yaml
+provider:
+  #...
+  iamRoleStatements: #the permissions needed by the Lambda functions to access other AWS resources
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/expenses-${self:provider.stage}"
+```
+
+Normally we would avoid a `*` wildcard in permissions, and rather define the exact list of permissions. For this tut we are taking the shortcut and leaving the specific permissions to the reader to figure out.
 
 ### How to test locally
-TODO: using MOCKED env var to determine instance of DataRepository to load 
+We now have two implementations of `DataRepository`: `InMemoryRepository` and `DynamoDBRepository`. 
+How will our code know which one to use? 
+
+When testing locally, to keep things simple, we do not want to use DynamoDB, but when running on AWS, we want to use DynamoDB.
+
+As already mentioned: the `serverless.yml` file sets the `STAGE` environment variable to `development` for the runtime environments of our lambda functions. Later we can enhance this with options for `production` and other stages.
+
+In `build.gradle` we can use the following code to set a value for the `STAGE` env var:
+```groovy
+test {
+    environment "STAGE","testing"
+    useJUnitPlatform()
+}
+```
+
+We can check for the value of the `STAGE` environment variable in our code, and use that to determine what implementation of `DataRepository` to use.
+If it does not equal `testing`, we use `DynamoDBRepository`, else `InMemoryRepository`.
+
+Since we will do this check in various places, we encapsulate it in a class `DataRepositoryFactory`, and change all the places that instantiated `InMemoryRepository` directly to rather use the `DataRepositoryFactory.getDataRepository()` method.
 
 ### Update lambda handlers to use new persistence
 TODO: update and try it out

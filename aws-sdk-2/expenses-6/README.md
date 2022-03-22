@@ -118,6 +118,8 @@ The `ProvisionedThroughput` indicates how many clients can read or write to the 
 
 There are a number of other configuration options available, see [the Cloudformation docs](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dynamodb-table.html) and also refer [to Serverless.com docs on DynamoDB](https://www.serverless.com/guides/dynamodb).
 
+_Note: it is also possible to create the DynamoDB tables by code. Look at the `createTable` method in the DynamoDB client api._
+
 ### Configure the Lambda permissions
 In order for a lambda function to be able to access a DynamoDB table, it needs the correct permissions. 
 We can assign permissions in the `serverless.yml` file:

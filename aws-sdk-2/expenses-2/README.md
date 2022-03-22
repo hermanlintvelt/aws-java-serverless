@@ -119,15 +119,12 @@ Refer to [Logging Basics](#logging-basics) for how to view the output from the l
 ## Tips & Tricks
 
 ### Logging basics
-TODO: https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/logging-slf4j.html
+Logging is very important, it is sometimes the only view you have on what is happening in lambda functions. Read more [in this AWS SDK guide about logging](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/logging-slf4j.html). 
+
 _Note: you can also view the `LOG` output from running the function code in [AWS Cloudwatch](https://aws.amazon.com/cloudwatch/)._
 
 ### On Environments
-TODO something on dev, vs staging, vs prod environments and how to manage it 
-
-### Java Code examples TODO: move to later iteration
-Various code examples exist for the various parts of the AWS SDK.
-Refer to the [AWS Code Samples for Java (SDK V2)](https://docs.aws.amazon.com/code-samples/latest/catalog/code-catalog-javav2.html) doc.
+You will notice the naming we use in `serverless.yml` and the value of `STAGE` environment variable being used at times in the code. This is done to allow different virtual environments to be deployed and running at the same time. E.g. one for development, one for testing and one for production. 
 
 ### Lambda Layers
-TODO
+You can read up about using _Lambda Layers_ to make it more efficient to deploy the libraries that are shared between your various lambda functions.

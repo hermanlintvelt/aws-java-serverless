@@ -6,9 +6,10 @@ Goal: Persist the expenses to DynamoDB and change Lambdas to use the persisted d
 
 Steps:
 1. [Persisting to DynamoDB](#persisting-to-dynamodb)
-2. [Configure the Lambda permissions](#configure-the-lambda-permissions)
-3. [How to test locally](#how-to-test-locally)
-4. [Update lambda handlers to use new persistence](#update-lambda-handlers-to-use-new-persistence)
+2. [Create the actual DynamoDB table](#create-the-actual-dynamodb-table)
+3. [Configure the Lambda permissions](#configure-the-lambda-permissions)
+4. [How to test locally](#how-to-test-locally)
+5. [Update lambda handlers to use new persistence](#update-lambda-handlers-to-use-new-persistence)
 
 ### Persisting to DynamoDB
 [AWS DynamoDB] provides an easy to use, fast and scalable NoSQL database service. There are other managed persistence services provided by AWS, but DynamoDB is a good one to start out with, and very scalable at low cost. In this tutorial we use it for all our lambdas, but nothing prevents you from using different storage services for different lambda functions or groups of lambda functions, similar to how in micro-services architecture the various micro services has their own data stores.
@@ -71,7 +72,7 @@ public class DynamoDBRepository implements DataRepository {
 }
 ```
 
-Then we must setup the DynamoDB table reference. The DynamoDB client lib creates the table if it does not exist yet, using the schema as defined by the properties of `ExpenseRecord` class.
+Then we must setup the DynamoDB table reference, using the schema as defined by the properties of `ExpenseRecord` class.
 
 ```java
 public class DynamoDBRepository implements DataRepository {
@@ -86,6 +87,36 @@ public class DynamoDBRepository implements DataRepository {
 
 Lastly we implement the `addExpense`, `findExpensesPaidBy` and `allExpenses` methods to use the DynamoDB client api to insert data and retrieve data. 
 You can [read more about the various requests and queries in the AWS doc](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/examples-dynamodb-enhanced.html).
+
+### Create the actual DynamoDB table
+The above provides us a way to use the DynamoDB table in code. However, at this point it does not actually exist yet.
+
+A simple way of creating the table as part of the deployment is to define it in the `serverless.yml` file:
+
+```yaml
+resources:
+  Resources:
+    ExpensesDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        TableName: expenses-${self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+```
+
+The `resources` section in `serverless.yml` is where we define other AWS resources needed by our service, using [AWS Cloudformation](https://aws.amazon.com/cloudformation/) configuration. It will create a DynamoDB table with the name `expenses-development` (the _stage_ variable), with a main _hash_ or _partition_ `id` (this must match the property you set as `@DynamoDbPartitionKey` in `ExpenseRecord`). 
+
+The `ProvisionedThroughput` indicates how many clients can read or write to the table at the same time. 
+
+There are a number of other configuration options available, see [the Cloudformation docs](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dynamodb-table.html) and also refer [to Serverless.com docs on DynamoDB](https://www.serverless.com/guides/dynamodb).
 
 ### Configure the Lambda permissions
 In order for a lambda function to be able to access a DynamoDB table, it needs the correct permissions. 
@@ -122,8 +153,18 @@ test {
 We can check for the value of the `STAGE` environment variable in our code, and use that to determine what implementation of `DataRepository` to use.
 If it does not equal `testing`, we use `DynamoDBRepository`, else `InMemoryRepository`.
 
-Since we will do this check in various places, we encapsulate it in a class `DataRepositoryFactory`, and change all the places that instantiated `InMemoryRepository` directly to rather use the `DataRepositoryFactory.getDataRepository()` method.
 
 ### Update lambda handlers to use new persistence
-TODO: update and try it out
-TODO: show data in console?
+Since we will do this check in various places, we encapsulate it in a class `DataRepositoryFactory`, and change all the places (including tests) that instantiated `InMemoryRepository` directly to rather use the `DataRepositoryFactory.getDataRepository()` method.
+
+Also remember to take out the call to `expenseAggregate.createMockedData()` in `GetExpensesHandler`.
+
+Then do:
+
+* `./gradlew build`
+* 'sls deploy'
+* and send a POST request with new expense to `/expenses` as per earlier iteration.
+
+Now when you do a GET to `/expenses` endpoint, you should actually get the expense(s) you created via the POST request.
+
+You can review the data in [the AWS DynamoDB Console](https://af-south-1.console.aws.amazon.com/dynamodbv2/home?region=af-south-1#table?initialTagKey=&name=expenses-development&tab=overview).

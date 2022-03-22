@@ -18,12 +18,12 @@ public class ExpenseAggregate {
     private static final Logger LOG = LogManager.getLogger(ExpenseAggregate.class);
     private final DataRepository dataRepository = DataRepositoryFactory.getDataRepository();
 
-    public void createMockedData() {
-        Person me = new Person("me@me.com");
-        createExpense(new Expense(BigDecimal.valueOf(150.0), me));
-        createExpense(new Expense(BigDecimal.valueOf(234.0), me));
-        createExpense(new Expense(BigDecimal.valueOf(234.0),new Person("you@me.com")));
-    }
+//    public void createMockedData() {
+//        Person me = new Person("me@me.com");
+//        createExpense(new Expense(BigDecimal.valueOf(150.0), me));
+//        createExpense(new Expense(BigDecimal.valueOf(234.0), me));
+//        createExpense(new Expense(BigDecimal.valueOf(234.0),new Person("you@me.com")));
+//    }
 
     /**
      * Create an event and ensure it is stored in the repository

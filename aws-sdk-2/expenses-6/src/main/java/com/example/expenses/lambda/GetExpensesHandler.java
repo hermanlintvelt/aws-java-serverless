@@ -23,10 +23,6 @@ public class GetExpensesHandler implements RequestHandler<APIGatewayProxyRequest
 
     private static final ExpenseAggregate EXPENSE_AGGREGATE = new ExpenseAggregate();
 
-    public GetExpensesHandler(){
-        EXPENSE_AGGREGATE.createMockedData();
-    }
-
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
         LOG.info("Retrieving all expenses");

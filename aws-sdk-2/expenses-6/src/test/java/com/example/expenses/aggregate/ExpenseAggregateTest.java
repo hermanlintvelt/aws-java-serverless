@@ -40,7 +40,7 @@ class ExpenseAggregateTest {
         List<Expense> foundExpenses = expenseAggregate.findExpensesPaidBy(me.getEmail());
         assertThat(foundExpenses).isNotNull();
         assertThat(foundExpenses).asList().isNotEmpty();
-        assertThat(foundExpenses).asList().containsOnly(expense1, expense2);
+        assertThat(foundExpenses).asList().contains(expense1, expense2);
     }
 
     @Test

@@ -35,7 +35,7 @@ public class GetExpensesHandlerTest {
         try {
             List<Expense> expenses = OBJECT_MAPPER.readValue(result.getBody(), List.class);
             assertThat(expenses).asList().isNotEmpty();
-            assertThat(expenses).asList().size().isEqualTo(3);
+            assertThat(expenses).asList().size().isGreaterThanOrEqualTo(3);
         } catch (JsonProcessingException e) {
             fail("did not expect json error");
         }

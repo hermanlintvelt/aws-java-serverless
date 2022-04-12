@@ -49,8 +49,10 @@ package:
   artifact: build/distributions/expenses-service.zip
 
 functions:
-  hello:
+  hello: #expenses-service-development-hello
     handler: com.example.expenses.lambda.HelloHandler
+
+
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details

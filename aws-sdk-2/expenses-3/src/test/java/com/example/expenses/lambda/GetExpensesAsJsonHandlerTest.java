@@ -1,9 +1,7 @@
 package com.example.expenses.lambda;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.example.expenses.aggregate.ExpenseAggregate;
 import com.example.expenses.model.Expense;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -5,6 +5,7 @@ In which we build a AWS Serverless backend using:
 * Java (11)
 * AWS Lambda, DynamoDB, API Gateway, SQS
 * Serverless.com
+* _Coming Soon_: Using Amazon CDK for deployment.
 
 ## AWS SDK for Java 1.x
 

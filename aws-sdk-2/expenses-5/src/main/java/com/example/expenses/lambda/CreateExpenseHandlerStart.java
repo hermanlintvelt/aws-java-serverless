@@ -15,9 +15,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class CreateExpenseHandlerStart implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
     private static final Logger LOG = LogManager.getLogger(CreateExpenseHandlerStart.class);
-    private static final ObjectMapper OBJECT_MAPPER = new FullyConfiguredMapper();
-
-    private static final ExpenseAggregate EXPENSE_AGGREGATE = new ExpenseAggregate();
 
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {

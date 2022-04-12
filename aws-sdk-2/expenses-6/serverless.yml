@@ -42,7 +42,7 @@ provider:
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/expenses-${self:provider.stage}"
 
-# this is the binary package that containst the code for the various lambda handlers, and dependency jars
+# this is the binary package that contains the code for the various lambda handlers, and dependency jars
 package:
   artifact: build/distributions/expenses-service.zip
 

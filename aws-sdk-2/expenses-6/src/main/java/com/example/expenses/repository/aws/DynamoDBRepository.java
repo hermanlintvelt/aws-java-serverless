@@ -6,6 +6,7 @@ import com.example.expenses.model.Person;
 import com.example.expenses.repository.DataRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import software.amazon.awssdk.core.pagination.sync.SdkIterable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Expression;
@@ -88,6 +89,7 @@ public class DynamoDBRepository implements DataRepository {
     @Override
     public List<Expense> allExpenses() {
         LOG.info("Retrieving all expenses from DynamoDB");
-        return expensesTable.scan().items().stream().map(ExpenseRecord::asExpense).collect(Collectors.toUnmodifiableList());
+        SdkIterable<ExpenseRecord> records = expensesTable.scan().items();
+        return records.stream().map(expenseRecord -> expenseRecord.asExpense()).collect(Collectors.toUnmodifiableList());
     }
 }

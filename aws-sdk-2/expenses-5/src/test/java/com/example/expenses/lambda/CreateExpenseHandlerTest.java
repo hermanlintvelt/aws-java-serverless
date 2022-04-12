@@ -31,7 +31,7 @@ public class CreateExpenseHandlerTest {
 
     @Test
     @DisplayName("Sending a valid request to create an expense must create and return a valid expense")
-    void testGetExpenses(){
+    void testCreateValidExpenses(){
         APIGatewayProxyResponseEvent result = testHandler.handleRequest(new APIGatewayProxyRequestEvent().withBody("{\n" +
                 "    \"email\": \"me@me.com\",\n" +
                 "    \"amount\": 100.0\n" +
@@ -46,4 +46,14 @@ public class CreateExpenseHandlerTest {
             fail("did not expect json error");
         }
     }
+
+    @Test
+    @DisplayName("Invalid JSON request body should fail with 400 error")
+    void testCreateInvalidExpenses(){
+        APIGatewayProxyResponseEvent result = testHandler.handleRequest(new APIGatewayProxyRequestEvent().withBody("{\n" +
+                "    \"amount: 100.0\n" +
+                " }"), testContext);
+        assertThat(result.getStatusCode()).isEqualTo(400);
+    }
+
 }

@@ -48,7 +48,7 @@ functions:
           cors: true
   create-expense:
 #    handler: com.example.expenses.lambda.CreateExpenseHandlerStart
-#    handler: com.example.expenses.lambda.CreateExpenseHandlerJsonNode
+    #handler: com.example.expenses.lambda.CreateExpenseHandlerJsonNode
     handler: com.example.expenses.lambda.CreateExpenseHandlerRequestObject
     timeout: 30
     events:

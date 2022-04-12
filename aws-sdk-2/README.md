@@ -1,12 +1,16 @@
 # Java AWS Lambda with Serverless.com Tutorial
 
-In which we build a *Roadmaps API* using:
+In which we build a *Expense Service* using:
 
 * Java (11)
 * AWS Lambda, DynamoDB, API GateWay, SQS, using the [AWS SDK for Java v2.x](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/home.html) 
-* Serverless.com
+* [Serverless.com](https://serverless.com) for deployment
 
 This project aims to show how to deploy a basic API using AWS serverless services, and [Serverless Framework](https://serverless.com) to deploy it.
+
+## Coming Soon
+Watch this space for a version of this tutorial that use [Amazon CDK](https://aws.amazon.com/cdk/) for deployment. 
+Using CDK you can even write your infrastructure code in Java!
 
 ## Setup
 

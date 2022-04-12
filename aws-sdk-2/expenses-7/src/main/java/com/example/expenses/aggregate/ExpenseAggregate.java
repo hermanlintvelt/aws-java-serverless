@@ -1,5 +1,6 @@
 package com.example.expenses.aggregate;
 
+import com.example.expenses.lambda.aws.LoadedSQSEventNotifier;
 import com.example.expenses.lambda.aws.SQSEventNotifier;
 import com.example.expenses.model.Expense;
 import com.example.expenses.model.Person;
@@ -22,7 +23,7 @@ public class ExpenseAggregate {
         if (System.getenv("STAGE") == null || System.getenv("STAGE").equalsIgnoreCase("testing")){
             eventNotifier = new NullEventNotifier();
         } else {
-            eventNotifier = new SQSEventNotifier();
+            eventNotifier = new LoadedSQSEventNotifier();
         }
     }
 

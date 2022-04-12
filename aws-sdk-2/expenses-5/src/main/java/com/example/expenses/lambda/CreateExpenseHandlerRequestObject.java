@@ -32,6 +32,7 @@ public class CreateExpenseHandlerRequestObject implements RequestHandler<APIGate
         LOG.info("Creating an expense from request: "+request.toString());
         try {
             CreateExpenseRequest createExpenseRequest = OBJECT_MAPPER.readValue(request.getBody(), CreateExpenseRequest.class);
+
             Expense newExpense = EXPENSE_AGGREGATE.createExpense(
                     new Expense(BigDecimal.valueOf(createExpenseRequest.getAmount()),
                             new Person(createExpenseRequest.getEmail())));

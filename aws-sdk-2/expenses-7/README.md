@@ -5,7 +5,7 @@
 Goal: Create a Lambda function that listens to expense events via AWS Simple Queue Service (SQS) and keep track of expense totals per person
 
 Steps:
-1. [Create SQS Topic](#create-sqs-topic)
+1. [Create SQS Queue](#create-sqs-topic)
 2. [Listen to event from SQS](#listen-to-event-from-sqs)
 3. [Send event to SQS](#send-event-to-sqs)
 4. [Enhancing our listener](#enhancing-our-listener)
@@ -49,7 +49,7 @@ funtions:
     events:
       - sqs:
           arn:
-            Fn::Join:
+            Fn::Join: 
               - ':'
               - - arn
                 - aws

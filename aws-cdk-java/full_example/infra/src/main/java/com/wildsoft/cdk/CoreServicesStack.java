@@ -111,9 +111,9 @@ public class CoreServicesStack extends Stack {
     //we need this to map to hardcoded api key IDs, as they are generated and not deterministic, sadly
     private String getApiKeyId(String stageName){
         switch (stageName) {
-            case "staging" : return "e6rpwre8n4";
-            case "prod": return "1evaw6e36a";
-            default: return "55g4bo4es9";
+            case "staging" : return "staging-key-id";
+            case "prod": return "prod-key-id";
+            default: return "dev-key-id";
         }
     }
 

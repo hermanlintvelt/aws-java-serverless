@@ -8,8 +8,10 @@ Example containing
 
 1. AWS Lambda
 - getting going - basic example, dependencies etc
-- lambda powertools
+- http lambda
+- SQS/SNS lamba
 - calling other lambdas
+- env vars?
 - init tips & tricks for faster response times
 - dynamoDB tips & tricks - dynamodbmapper v2
 
@@ -23,6 +25,41 @@ Example containing
 - code pipelines?
 - orgs-structure...?
 
+## Steps
+0. pre-deploy example of everything to try out (different endpoint?) in case it fails..
+
+First simple example
+1. create project structure
+2. Create a simple java lambda
+3. deploy it via CDK
+4. call it from commmandline
+Now add HTTP callable lambda
+5. change lambda to handle AWSGW request and return response
+6. create GW endpoint via CDK, and deploy lambda with permissions
+7. call via postman
+How to add api key?
+8. create api key via ???
+9. add it and userplan to apigw endpoint
+10. update postman call
+How to deal with SQS/SNS
+11. show lambda
+12. update cdk to create queue/topic and deploy lambda with permissions
+13. update http lambda to put message on topic to test 
+Calling other lambdas
+14. show invoker way of doing it
+15. CDK update to deploy new lambda to test
+Response time (cold boot)
+16. init in static
+17. pre-init AWS resources
+18. example to show performance differences?
+Tips (mentions only):
+- dynamoDB mapper
+- ??? (static init??)
+CDK: deploying other language lambdas
+19. python example
+20. typescript example
+CICD
+21. basic codepipeline example
 
 ## Build & Deploy Stack changes
 

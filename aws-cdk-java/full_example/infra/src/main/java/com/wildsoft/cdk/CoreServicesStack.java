@@ -284,7 +284,7 @@ public class CoreServicesStack extends Stack {
 
     private Bucket createUploadS3Bucket(){
         final Bucket bucket = Bucket.Builder.create(this, "S3UploadBucket")
-                .bucketName(getRegion()+"-tracto-s3-upload-"+stageName)
+                .bucketName(getRegion()+"-example-media-upload-"+stageName)
                 .versioned(false)
                 .publicReadAccess(false)
                 .cors(List.of(CorsRule.builder()

@@ -1,0 +1,6 @@
+{
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"storageIdentifier\": \"bfd6229a-b25b-4830-8793-591e0eba3ae8.MOV\"}"
+}

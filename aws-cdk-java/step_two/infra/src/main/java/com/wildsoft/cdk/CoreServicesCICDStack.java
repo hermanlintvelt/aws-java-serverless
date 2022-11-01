@@ -18,7 +18,7 @@ import software.constructs.Construct;
 import java.util.*;
 
 /**
- * This setup a AWS CodePipeline for building our core services stack
+ * This setup an AWS CodePipeline for building our core services stack
  */
 public class CoreServicesCICDStack extends Stack {
     private static final Logger LOG = LogManager.getLogger(CoreServicesCICDStack.class);
@@ -69,6 +69,15 @@ public class CoreServicesCICDStack extends Stack {
 
         pipeline.addStage(new CoreServicesPipelineStage(this, "staging", StageProps.builder()
                 .build()));
+
+        //output console url
+        CfnOutput.Builder.create(this, "PipelineConsoleUrl")
+                .value(String.format("https://%s.console.aws.amazon.com/codesuite/codepipeline/pipelines/%s/view?region=%s",
+                        Stack.of(this).getRegion(),
+                        pipeline.getPipeline().getPipelineName(),
+                        Stack.of(this).getRegion()
+                        ))
+                .build();
 
     }
 }

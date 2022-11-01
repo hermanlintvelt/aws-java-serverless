@@ -20,7 +20,7 @@ How to create a Code Pipeline for builds, triggered from Github
 * Setup token in AWS Secrets Manager: `aws secretsmanager create-secret --name GITHUB_TOKEN --secret-string <YOUR_GITHUB_PERSONAL_ACCESS_TOKEN> --profile <YOUR_PROFILE>`
 * Set github values in `infra/cdk.json`
 * Define a CodePipeline linked to github (see `CodeServicesCICDStack`) 
-
+* Temporarily change `CoreServicesCdkApp` to setup code pipeline.
 
 ### Managing AWS Resources and Permissions
 

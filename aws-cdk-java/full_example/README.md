@@ -33,6 +33,8 @@ First simple example
 2. Create a simple java lambda
 3. deploy it via CDK
 4. call it from commmandline
+Layer dependencies?
+5. util/domain classes in layer?
 Now add HTTP callable lambda
 5. change lambda to handle AWSGW request and return response
 6. create GW endpoint via CDK, and deploy lambda with permissions
@@ -41,18 +43,25 @@ How to add api key?
 8. create api key via ???
 9. add it and userplan to apigw endpoint
 10. update postman call
+Calling other lambdas
+14. show invoker way of doing it
+
 How to deal with SQS/SNS
 11. show lambda
 12. update cdk to create queue/topic and deploy lambda with permissions
 13. update http lambda to put message on topic to test 
-Calling other lambdas
-14. show invoker way of doing it
 15. CDK update to deploy new lambda to test
+
+How do manage S3 Bucket and permissions
+16. show in lambda and CDK..
+
 Response time (cold boot)
 16. init in static
 17. pre-init AWS resources
 18. example to show performance differences?
 Tips (mentions only):
+- Separation of concerns: no business logic in lambda handler!
+- DDD aggregates as way to group lambdas
 - dynamoDB mapper
 - ??? (static init??)
 CDK: deploying other language lambdas

@@ -1,4 +1,4 @@
-# Java AWS Lambda with Serverless.com Tutorial
+# Using Java with AWS Serverless 
 
 In which we build a AWS Serverless backend using:
 

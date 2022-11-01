@@ -1,34 +1,48 @@
 # Java AWS Serverless - Step One
 
-First simple example
+- *Step One: Basic lambdas and getting them deployed*
+- Step Two: Adding CodePipeline to remove manual deployments
+- Step Three: Tips & Tricks
+
+## Step One
+
+### Structure
+
+* `infra` - Deploys lambda with CDK
+* `lambdas` - Contains Java lambda functions
+* `layer` - Creates layer for use by the lambdas
+
+### First simple example
 1. create project structure
 2. Create a simple java lambda - no input, string output
 3. Unit test it - find lambda
 4. deploy it via CDK
 5. call it from commandline
+
 `aws lambda invoke --function-name CoreServicesDEVStack-developmentsimplehandlerD999D-ra3ExXakKWsH --payload '' response.txt`
 
-JSON to POJO mapping for Lambdas
+* view `cdk.json` and `pom.xml` to see how CDK finds the App to run for deployment
+
+### JSON to POJO mapping for Lambdas
 6. Introduce `Message` request class
 7. Unittest and deploy
 8. Test via commandline
+
 `aws lambda invoke --function-name CoreServicesDEVStack-developmentmessagehandler6D5F-a9zqbgSRXoiQ --cli-binary-format raw-in-base64-out --payload '{"message": "Hello"}' response.txt`
 
-Layer dependencies
+### Layer dependencies
 9. util/domain classes in layer
 
-Http simple example
+### Http simple example
 10. Handler for API Gateway events
 11. Unittest
 12. Deploy endpoint via CDK
 13. Call via `curl`
 
+`curl https://qaxjj2p7kc.execute-api.eu-west-1.amazonaws.com/development/mypath/myresource`
 
-## Structure
-
-* `infra` - Deploys lambda with CDK
-* `lambdas` - Contains Java lambda functions
-* `layer` - Creates layer for use by the lambdas
+* Check the *CloudWatch* logs
+* Experiment with the event class
 
 ## Build & Deploy Stack changes
 

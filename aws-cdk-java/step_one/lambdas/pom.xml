@@ -11,7 +11,6 @@
     </parent>
 
     <properties>
-        <log4j.version>2.19.0</log4j.version>
         <jackson.version>2.13.2</jackson.version>
     </properties>
 
@@ -35,6 +34,7 @@
             <artifactId>aws-lambda-java-core</artifactId>
             <version>1.2.1</version>
         </dependency>
+<!--        NOTE: use below, and do NOT use direct dependencies on other logging packages-->
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-lambda-java-log4j2</artifactId>

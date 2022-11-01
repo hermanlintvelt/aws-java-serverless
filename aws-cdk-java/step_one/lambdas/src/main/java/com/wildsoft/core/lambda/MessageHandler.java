@@ -1,16 +1,14 @@
 package com.wildsoft.core.lambda;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class MessageHandler implements RequestHandler<MessageHandler.Message, String> {
-    private static final Logger LOG = LogManager.getLogger(MessageHandler.class);
-
     @Override
     public String handleRequest(Message request, Context context) {
-        LOG.info("Some request received: "+request.getMessage());
+        LambdaLogger logger = context.getLogger();
+        logger.log("Some request received: "+request);
 
         return "Greetings: "+request.getMessage();
     }
@@ -31,6 +29,13 @@ public class MessageHandler implements RequestHandler<MessageHandler.Message, St
 
         public void setMessage(String message) {
             this.message = message;
+        }
+
+        @Override
+        public String toString() {
+            return "Message{" +
+                    "message='" + message + '\'' +
+                    '}';
         }
     }
 }

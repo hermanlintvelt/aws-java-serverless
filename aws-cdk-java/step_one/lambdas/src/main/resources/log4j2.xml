@@ -1,13 +1,14 @@
-<Configuration status="INFO">
+<Configuration status="WARN">
     <Appenders>
-        <Console name="ConsoleAppender" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{YYYY-MM-dd HH:mm:ss} [%t] %-5p %c:%L - %m%n" />
-        </Console>
+        <Lambda name="Lambda">
+            <PatternLayout>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss} %X{AWSRequestId} %-5p %c{1} - %m%n</pattern>
+            </PatternLayout>
+        </Lambda>
     </Appenders>
-
     <Loggers>
         <Root level="INFO">
-            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="Lambda"/>
         </Root>
         <Logger name="software.amazon.awssdk" level="WARN" />
         <Logger name="software.amazon.awssdk.request" level="DEBUG" />

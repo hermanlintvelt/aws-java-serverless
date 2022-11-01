@@ -20,7 +20,7 @@ class APIGatewayHandlerTest {
     }
 
     @Test
-    @DisplayName("Test the httpo handler")
+    @DisplayName("Test the http handler")
     void testGetExpenses(){
         APIGatewayProxyResponseEvent result = testHandler.handleRequest(new APIGatewayProxyRequestEvent(), testContext);
         assertThat(result.getStatusCode()).isEqualTo(200);

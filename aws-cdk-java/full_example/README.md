@@ -79,6 +79,7 @@ Tips:
 - dynamoDB mapper
 - static init for better cold response time
 - Use the typescript docs
+- Lambda Powertools
 
 
 

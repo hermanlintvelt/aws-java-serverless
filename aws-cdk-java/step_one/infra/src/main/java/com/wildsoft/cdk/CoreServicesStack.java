@@ -166,7 +166,7 @@ public class CoreServicesStack extends Stack {
             attPathResource = uploadApi.getRoot().getResource("mypath");
         }
         Resource httpResource = attPathResource.addResource("myresource");
-        Method postMethod = httpResource.addMethod("POST", simpleIntegration,
+        Method postMethod = httpResource.addMethod("GET", simpleIntegration,
                 MethodOptions.builder()
                         .apiKeyRequired(false) //set to true for apikey
                         .build());

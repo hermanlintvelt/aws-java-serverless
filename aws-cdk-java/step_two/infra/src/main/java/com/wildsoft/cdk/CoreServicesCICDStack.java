@@ -50,13 +50,12 @@ public class CoreServicesCICDStack extends Stack {
 //                                        .resources(List.of("*"))
 //                                        .build())
 //                        ))
-//TODO: For Typescript:
-//                      .installCommands(List.of(
-//                                "npm install -g aws-cdk",   // Commands to run before build
-//                                "cd ts_lambdas && npm install" //for our typescript based lambdas
-//                        ))
+                      .installCommands(List.of(
+                                "npm install -g aws-cdk"   // Commands to run before build
+//                                "cd ts_lambdas && npm install" //TODO: for our typescript based lambdas
+                        ))
                         .commands(List.of(
-                                "cd ..",
+//TODO: typescript                                "cd ..",
                                 "mvn clean package",            //for our java based code
                                 "cd infra",               // cd to infra CDK dir
                                 "cdk synth"               // Synth command (always same)
@@ -69,15 +68,6 @@ public class CoreServicesCICDStack extends Stack {
 
         pipeline.addStage(new CoreServicesPipelineStage(this, "staging", StageProps.builder()
                 .build()));
-
-        //output console url
-        CfnOutput.Builder.create(this, "PipelineConsoleUrl")
-                .value(String.format("https://%s.console.aws.amazon.com/codesuite/codepipeline/pipelines/%s/view?region=%s",
-                        Stack.of(this).getRegion(),
-                        pipeline.getPipeline().getPipelineName(),
-                        Stack.of(this).getRegion()
-                        ))
-                .build();
 
     }
 }

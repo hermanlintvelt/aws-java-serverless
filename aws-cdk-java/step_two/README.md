@@ -1,4 +1,4 @@
-# Java AWS Serverless - Step One
+# Java AWS Serverless - Step Two
 
 - Step One: Basic lambdas and getting them deployed
 - *Step Two: Adding CodePipeline to avoid manual deployments*
@@ -30,8 +30,6 @@ How to create a Code Pipeline for builds, triggered from Github
 ## Build & Deploy Stack changes
 
 **Note:** AWS CDK CLI & Docker is required on your machine to deploy the solution
-
-*First time*: run `cdk bootstrap --profile <your profile>`
 
 - `mvn clean package` - build the solution
 - `cd infra`

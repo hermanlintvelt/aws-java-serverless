@@ -21,4 +21,4 @@ See the [AWS-SDK-2](aws-sdk-2) folder for a tutorial on using the 2.x sdk.
 
 ## AWS CDK for Java
 
-Th section on using [Java for CDK](aws-cdk-java) is still very much *work in progress*. 
+The section on using [Java for CDK](aws-cdk-java) is still very much *work in progress*, but should give some guidance already.

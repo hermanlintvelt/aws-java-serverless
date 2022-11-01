@@ -54,24 +54,6 @@ How to deal with SQS/SNS
 . update http lambda to put message on topic to test
 . CDK update to deploy new lambda to test
 
-CICD
-. basic codepipeline example
-
-How do manage S3 Bucket and permissions
-. show in lambda and CDK..
-
-Working with dynamoDB
-. Using DyanmoDBMapper V2 stuff
-. Create table in CDK, and assign permissions to lambda
-
-Response time (cold boot)
-. init in static
-. pre-init AWS resources
-. example to show performance differences?
-
-CDK: deploying other language lambdas
-. python example
-. typescript example
 
 Tips:
 - Separation of concerns: no business logic in lambda handler!
@@ -80,6 +62,8 @@ Tips:
 - static init for better cold response time
 - Use the typescript docs
 - Lambda Powertools
+- Calling other lambdas: show invoker way of doing it
+- Deploying python and typescript lambdas
 
 
 

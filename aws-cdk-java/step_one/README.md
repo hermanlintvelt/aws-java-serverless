@@ -43,6 +43,13 @@
 
 * Check the *CloudWatch* logs
 * Experiment with the event class
+* Look at CORS configuration in API Gateway console
+
+### Api Key
+
+14. manuallly create api key
+15. add it and userplan to apigw endpoint
+16. deploy and test via `x-api-key` header
 
 ## Build & Deploy Stack changes
 

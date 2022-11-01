@@ -25,8 +25,8 @@
       "aws-cn"
     ],
     "service_name": "coreservices",
-    "github_alias": "augmental-tech",
-    "github_repo_name": "core-services",
-    "github_repo_branch": "main"
+    "github_alias": "hermanlintvelt",
+    "github_repo_name": "aws-java-serverless",
+    "github_repo_branch": "staging"
   }
 }

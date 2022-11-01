@@ -1,10 +1,10 @@
 # Java AWS Serverless - Step One
 
-- *Step One: Basic lambdas and getting them deployed*
-- Step Two: Adding CodePipeline to remove manual deployments
+- Step One: Basic lambdas and getting them deployed
+- *Step Two: Adding CodePipeline to avoid manual deployments*
 - Step Three: Tips & Tricks
 
-## Step One
+## Step Two
 
 ### Structure
 
@@ -12,37 +12,20 @@
 * `lambdas` - Contains Java lambda functions
 * `layer` - Creates layer for use by the lambdas
 
-### First simple example
-1. create project structure
-2. Create a simple java lambda - no input, string output
-3. Unit test it - find lambda
-4. deploy it via CDK
-5. call it from commandline
+### CICD with CodePipeline
 
-`aws lambda invoke --function-name CoreServicesDEVStack-developmentsimplehandlerD999D-ra3ExXakKWsH --payload '' response.txt`
+How to create a Code Pipeline for builds, triggered from Github
 
-* view `cdk.json` and `pom.xml` to see how CDK finds the App to run for deployment
+* [Grant access to Github repo](https://catalog.us-east-1.prod.workshops.aws/workshops/13304db2-f715-48bf-ada0-92e5c4eea945/en-US/040-cicd/10-setup-your-git-repository)
+* Setup token in AWS Secrets Manager: `aws secretsmanager create-secret --name GITHUB_TOKEN --secret-string <YOUR_GITHUB_PERSONAL_ACCESS_TOKEN> --profile <YOUR_PROFILE>`
+* Set github values in `infra/cdk.json`
+* Define a CodePipeline linked to github (see `CodeServicesCICDStack`) 
 
-### JSON to POJO mapping for Lambdas
-6. Introduce `Message` request class
-7. Unittest and deploy
-8. Test via commandline
 
-`aws lambda invoke --function-name CoreServicesDEVStack-developmentmessagehandler6D5F-a9zqbgSRXoiQ --cli-binary-format raw-in-base64-out --payload '{"message": "Hello"}' response.txt`
+### Managing AWS Resources and Permissions
 
-### Layer dependencies
-9. util/domain classes in layer
-
-### Http simple example
-10. Handler for API Gateway events
-11. Unittest
-12. Deploy endpoint via CDK
-13. Call via `curl`
-
-`curl https://qaxjj2p7kc.execute-api.eu-west-1.amazonaws.com/development/mypath/myresource`
-
-* Check the *CloudWatch* logs
-* Experiment with the event class
+* Show how to create S3 Bucket and assign permissions to lambdas
+* Show how to access Secure Parameter Store
 
 ## Build & Deploy Stack changes
 

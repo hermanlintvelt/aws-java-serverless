@@ -26,49 +26,61 @@ Example containing
 - orgs-structure...?
 
 ## Steps
-0. pre-deploy example of everything to try out (different endpoint?) in case it fails..
-
 First simple example
-1. create project structure
-2. Create a simple java lambda
-3. deploy it via CDK
-4. call it from commmandline
+. create project structure
+. Create a simple java lambda
+. deploy it via CDK
+. call it from commmandline
+
 Layer dependencies?
-5. util/domain classes in layer?
+. util/domain classes in layer?
+
 Now add HTTP callable lambda
-5. change lambda to handle AWSGW request and return response
-6. create GW endpoint via CDK, and deploy lambda with permissions
-7. call via postman
+. change lambda to handle AWSGW request and return response
+. create GW endpoint via CDK, and deploy lambda with permissions
+. call via postman
+
 How to add api key?
-8. create api key via ???
-9. add it and userplan to apigw endpoint
-10. update postman call
+. create api key via ???
+. add it and userplan to apigw endpoint
+. update postman call
+
 Calling other lambdas
-14. show invoker way of doing it
+. show invoker way of doing it
 
 How to deal with SQS/SNS
-11. show lambda
-12. update cdk to create queue/topic and deploy lambda with permissions
-13. update http lambda to put message on topic to test 
-15. CDK update to deploy new lambda to test
+. show lambda
+. update cdk to create queue/topic and deploy lambda with permissions
+. update http lambda to put message on topic to test
+. CDK update to deploy new lambda to test
+
+CICD
+. basic codepipeline example
 
 How do manage S3 Bucket and permissions
-16. show in lambda and CDK..
+. show in lambda and CDK..
+
+Working with dynamoDB
+. Using DyanmoDBMapper V2 stuff
+. Create table in CDK, and assign permissions to lambda
 
 Response time (cold boot)
-16. init in static
-17. pre-init AWS resources
-18. example to show performance differences?
-Tips (mentions only):
+. init in static
+. pre-init AWS resources
+. example to show performance differences?
+
+CDK: deploying other language lambdas
+. python example
+. typescript example
+
+Tips:
 - Separation of concerns: no business logic in lambda handler!
 - DDD aggregates as way to group lambdas
 - dynamoDB mapper
-- ??? (static init??)
-CDK: deploying other language lambdas
-19. python example
-20. typescript example
-CICD
-21. basic codepipeline example
+- static init for better cold response time
+- Use the typescript docs
+
+
 
 ## Build & Deploy Stack changes
 

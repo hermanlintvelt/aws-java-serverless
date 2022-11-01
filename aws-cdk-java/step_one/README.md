@@ -6,11 +6,13 @@ First simple example
 3. Unit test it - find lambda
 4. deploy it via CDK
 5. call it from commandline
+`aws lambda invoke --function-name CoreServicesDEVStack-developmentsimplehandlerD999D-ra3ExXakKWsH response.txt`
 
 JSON to POJO mapping for Lambdas
 6. Introduce `Message` request class
 7. Unittest and deploy
 8. Test via commandline
+`aws lambda invoke --function-name CoreServicesDEVStack-developmentsimplehandlerD999D-ra3ExXakKWsH --cli-binary-format raw-in-base64-out --payload '{"message": "Hello"}' response.txt`
 
 Layer dependencies
 9. util/domain classes in layer

@@ -3,6 +3,9 @@
 
 .history
 
+# example response testing file
+response.txt
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml

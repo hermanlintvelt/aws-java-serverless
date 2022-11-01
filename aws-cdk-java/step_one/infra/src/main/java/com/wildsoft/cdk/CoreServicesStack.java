@@ -46,8 +46,9 @@ public class CoreServicesStack extends Stack {
                 .compatibleRuntimes(List.of(Runtime.JAVA_11))
                 .build());
 
-        //simple string handler
+        //simple handlers
         createStringHandler(layer);
+        createMessageHandler(layer);
 
         //upload service used for uploading of Journal entry attachments
         //Create REST API endpoint
@@ -107,6 +108,23 @@ public class CoreServicesStack extends Stack {
                 .build());
 
         CfnOutput.Builder.create(this, "String Handler: ")
+                .description("")
+                .value(simpleFunction.getFunctionName()+": "+simpleFunction.getFunctionArn())
+                .build();
+    }
+
+    private void createMessageHandler(LayerVersion layer){
+        final Function simpleFunction = new Function(this, stageName+"-message-handler", FunctionProps.builder()
+                .runtime(Runtime.JAVA_11)
+                .code(Code.fromAsset("../lambdas/target/lambdas.jar"))
+                .handler("com.wildsoft.core.lambda.MessageHandler")
+                .layers(List.of(layer))
+                .memorySize(512)
+                .timeout(Duration.seconds(30))
+                .logRetention(RetentionDays.ONE_YEAR)
+                .build());
+
+        CfnOutput.Builder.create(this, "Message Handler: ")
                 .description("")
                 .value(simpleFunction.getFunctionName()+": "+simpleFunction.getFunctionArn())
                 .build();

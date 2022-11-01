@@ -2,18 +2,24 @@
 
 First simple example
 1. create project structure
-2. Create a simple java lambda
-3. Unit test it
+2. Create a simple java lambda - no input, string output
+3. Unit test it - find lambda
 4. deploy it via CDK
 5. call it from commandline
 
+JSON to POJO mapping for Lambdas
+6. Introduce `Message` request class
+7. Unittest and deploy
+8. Test via commandline
+
 Layer dependencies
-6. util/domain classes in layer
+9. util/domain classes in layer
 
 Http simple example
-7. Handler for API Gateway events
-8. Deploy endpoint via CDK
-9. Call via Postman
+10. Handler for API Gateway events
+11. Unittest
+12. Deploy endpoint via CDK
+13. Call via Postman
 
 
 ## Structure
@@ -25,6 +31,8 @@ Http simple example
 ## Build & Deploy Stack changes
 
 **Note:** AWS CDK CLI & Docker is required on your machine to deploy the solution
+
+*First time*: run `cdk bootstrap --profile <your profile>`
 
 - `mvn clean package` - build the solution
 - `cd infra`

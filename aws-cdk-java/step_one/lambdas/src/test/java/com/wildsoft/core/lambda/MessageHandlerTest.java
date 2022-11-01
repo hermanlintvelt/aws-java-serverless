@@ -1,28 +1,26 @@
 package com.wildsoft.core.lambda;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
-import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-class StringHandlerTest {
+class MessageHandlerTest {
 
-    private StringHandler testHandler;
+    private MessageHandler testHandler;
     private Context testContext;
 
     @org.junit.jupiter.api.BeforeEach
     public void setUp() {
-        testHandler = new StringHandler();
+        testHandler = new MessageHandler();
         testContext = new NullContext();
     }
 
     @Test
-    @DisplayName("Test the string handler")
+    @DisplayName("Test the message handler")
     void testGetExpenses(){
-        String result = testHandler.handleRequest("Meh", testContext);
+        String result = testHandler.handleRequest(new MessageHandler.Message("Hello"), testContext);
         assertThat(result).isEqualTo("Greetings");
     }
 }

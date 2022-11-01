@@ -22,11 +22,6 @@ How to create a Code Pipeline for builds, triggered from Github
 * Define a CodePipeline linked to github (see `CodeServicesCICDStack`) 
 * Temporarily change `CoreServicesCdkApp` to setup code pipeline.
 
-### Managing AWS Resources and Permissions
-
-* Show how to create S3 Bucket and assign permissions to lambdas
-* Show how to access Secure Parameter Store
-
 ## Build & Deploy Stack changes
 
 **Note:** AWS CDK CLI & Docker is required on your machine to deploy the solution

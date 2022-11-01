@@ -56,6 +56,7 @@ public class CoreServicesCICDStack extends Stack {
                         ))
                         .commands(List.of(
 //TODO: typescript                                "cd ..",
+                                "cd aws-cdk-java/step_two", //go to correct dir for this tutorial example step
                                 "mvn clean package",            //for our java based code
                                 "cd infra",               // cd to infra CDK dir
                                 "cdk synth"               // Synth command (always same)

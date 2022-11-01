@@ -61,7 +61,7 @@ public class CoreServicesCICDStack extends Stack {
                                 "cd infra",               // cd to infra CDK dir
                                 "cdk synth"               // Synth command (always same)
                         ))
-                        .primaryOutputDirectory("infra/cdk.out")
+                        .primaryOutputDirectory("aws-cdk-java/step_two/infra/cdk.out")
 //TODO: For Typescript:
 //                          .env(Map.of("privileged", "true"))
                         .build())

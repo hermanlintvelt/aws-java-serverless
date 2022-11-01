@@ -12,36 +12,12 @@ public class CoreTimestreamConstruct extends Construct {
 
     //TODO: see timesteam best practices: https://docs.aws.amazon.com/timestream/latest/developerguide/data-modeling.html
     /**
-     * Multi-measure table to store different events from tracto app.
+     * Multi-measure table to store different events from the app.
      * measure name == event type
-     * dimensions: childId, userId,
+     * dimensions: userId,
      * measures: value, timestamp, ???
      */
     private final CfnTable eventsTable;
-
-    /**
-     * multi-measure table
-     * measure name == assessment type
-     * dimensions: childId, userId,
-     * measures: timestamp, question, value, tags, ???
-     */
-    private final CfnTable assessmentsTable;
-
-    /**
-     * single measure table
-     * dimensions: timestamp, userId,
-     * measure name: type of config item
-     * value: config value
-     */
-    private final CfnTable configurationEntryTable;
-
-    /**
-     * multi-measure table
-     * dimensions: childId, userId, timestamp
-     * measure name: ??
-     * measures: height, weight, age?, conditions?
-     */
-    private final CfnTable childProfileSnapshotsTable;
 
     public CoreTimestreamConstruct(@NotNull Construct scope, @NotNull String id) {
         super(scope, id);
@@ -60,28 +36,5 @@ public class CoreTimestreamConstruct extends Construct {
                         .build());
         this.eventsTable.getNode().addDependency(this.timeStreamDB);
 
-        this.assessmentsTable = new CfnTable(this, "CoreTimestreamTableAssessments",
-                CfnTableProps.builder()
-                        .tableName("core-ts-assessments")
-                        .databaseName(dbName)
-                        //.retentionProperties(???)
-                        .build());
-        this.assessmentsTable.getNode().addDependency(this.timeStreamDB);
-
-        this.configurationEntryTable = new CfnTable(this, "CoreTimestreamTableConfig",
-                CfnTableProps.builder()
-                        .tableName("core-ts-config")
-                        .databaseName(dbName)
-                        //.retentionProperties(???)
-                        .build());
-        this.configurationEntryTable.getNode().addDependency(this.timeStreamDB);
-
-        this.childProfileSnapshotsTable = new CfnTable(this, "CoreTimestreamTableProfiles",
-                CfnTableProps.builder()
-                        .tableName("core-ts-profilesnapshots")
-                        .databaseName(dbName)
-                        //.retentionProperties(???)
-                        .build());
-        this.childProfileSnapshotsTable.getNode().addDependency(this.timeStreamDB);
     }
 }

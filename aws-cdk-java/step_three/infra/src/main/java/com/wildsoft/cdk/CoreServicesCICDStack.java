@@ -18,7 +18,7 @@ import software.constructs.Construct;
 import java.util.*;
 
 /**
- * This setup a AWS CodePipeline for building our core services stack
+ * This setup an AWS CodePipeline for building our core services stack
  */
 public class CoreServicesCICDStack extends Stack {
     private static final Logger LOG = LogManager.getLogger(CoreServicesCICDStack.class);
@@ -65,15 +65,7 @@ public class CoreServicesCICDStack extends Stack {
                         .build())
                 .build();
 
-//        //output console url
-//        CfnOutput.Builder.create(this, "PipelineConsoleUrl")
-//                .value(String.format("https://%s.console.aws.amazon.com/codesuite/codepipeline/pipelines/%s/view?region=%s",
-//                        Stack.of(this).getRegion(),
-//                        codePipeline.getPipeline().getPipelineName(),
-//                        Stack.of(this).getRegion()
-//                        ))
-//                .build();
-
+        //Below code is to be able to deploy to various accounts in an AWS organisation, e.g. separate accounts for DEV, Staging and Production
         OrganizationsClient organizationsClient;
         if (System.getenv("CODEBUILD_BUILD_ID") == null){
             organizationsClient = OrganizationsClient.builder()

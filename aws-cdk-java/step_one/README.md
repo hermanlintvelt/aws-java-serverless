@@ -6,13 +6,13 @@ First simple example
 3. Unit test it - find lambda
 4. deploy it via CDK
 5. call it from commandline
-`aws lambda invoke --function-name CoreServicesDEVStack-developmentsimplehandlerD999D-ra3ExXakKWsH response.txt`
+`aws lambda invoke --function-name CoreServicesDEVStack-developmentsimplehandlerD999D-ra3ExXakKWsH --payload '' response.txt`
 
 JSON to POJO mapping for Lambdas
 6. Introduce `Message` request class
 7. Unittest and deploy
 8. Test via commandline
-`aws lambda invoke --function-name CoreServicesDEVStack-developmentsimplehandlerD999D-ra3ExXakKWsH --cli-binary-format raw-in-base64-out --payload '{"message": "Hello"}' response.txt`
+`aws lambda invoke --function-name CoreServicesDEVStack-developmentmessagehandler6D5F-a9zqbgSRXoiQ --cli-binary-format raw-in-base64-out --payload '{"message": "Hello"}' response.txt`
 
 Layer dependencies
 9. util/domain classes in layer
@@ -21,7 +21,7 @@ Http simple example
 10. Handler for API Gateway events
 11. Unittest
 12. Deploy endpoint via CDK
-13. Call via Postman
+13. Call via `curl`
 
 
 ## Structure

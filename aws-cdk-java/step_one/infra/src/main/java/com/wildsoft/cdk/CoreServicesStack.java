@@ -168,7 +168,7 @@ public class CoreServicesStack extends Stack {
         Resource httpResource = attPathResource.addResource("myresource");
         Method postMethod = httpResource.addMethod("POST", simpleIntegration,
                 MethodOptions.builder()
-                        .apiKeyRequired(true)
+                        .apiKeyRequired(false) //set to true for apikey
                         .build());
 
 //        //Assign Read/Write permissions to lambda for bucket

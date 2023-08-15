@@ -1,6 +1,6 @@
 # Using Java with AWS Serverless 
 
-Java is indeed a first-class citizen of the AWS world. With the [Snapstart](https://docs.aws.amazon.com/lambda/latest/dg/snapstart.html) feature recently released by AWS (do address cold-start concerns), as well as support for *Java 17* runtime for AWS Lambdas, we can use a powerful language to implement our serverless functions. 
+Java is indeed a first-class citizen of the AWS world. With the [Snapstart](https://docs.aws.amazon.com/lambda/latest/dg/snapstart.html) feature recently released by AWS (to address cold-start concerns), as well as support for *Java 17* runtime for AWS Lambdas, we can use a powerful language to implement our serverless functions. 
 
 In this tutorial we will look at using the following technologies:
 

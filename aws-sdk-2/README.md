@@ -8,9 +8,8 @@ In which we build a *Expense Service* using:
 
 This project aims to show how to deploy a basic API using AWS serverless services, and [Serverless Framework](https://serverless.com) to deploy it.
 
-## Coming Soon
-Watch this space for a version of this tutorial that use [Amazon CDK](https://aws.amazon.com/cdk/) for deployment. 
-Using CDK you can even write your infrastructure code in Java!
+## Using CDK
+This tutorial still make use of [Serverless.com](https://serverless.com) for deployment, but you can view [the CDK tutorial](../aws-cdk-java/README.md) for information on using AWS CDK to even implement your infrastructure as code in Java.
 
 ## Setup
 
@@ -45,8 +44,3 @@ A basic API for tracking expenses.
 6. [Persist the expenses to DynamoDB and change Lambdas to use the persisted data](expenses-6)
 7. [Create a Lambda function that listens to expense events via AWS Simple Queue Service](expenses-7)
 8. (Later) hook up API Gateway endpoint to expense totals lambda
-
-## Architecture Phases
-A quick overview of how we progressed with this project on deployment architecture side.
-
-![](docs/expenses_architecture_phases.png)
